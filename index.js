@@ -40,12 +40,12 @@ app.post('/cadastrar', (req, res) => {
         'INSERT INTO Bloco (descricao, qtd_apartamento) VALUES (?, ?)';
     connection.query(insert, [bloco, quantidade], (err, results) => {
         if(err){
-            console.error("Error to insert product: ", err);
-            res.status(500).send("Error to register the product");
+            console.error("Erro ao inserir produto: ", err);
+            res.status(500).send("Erro ao inserir bloco");
             return;
         }
         else {
-            console.log("Product was insert with success!");
+            console.log("Bloco inserido com sucesso!");
             res.redirect('/');
         }
     })
@@ -92,12 +92,12 @@ app.get('/deletar/:ID', (req, res) => {
     const deletar = 'DELETE FROM Bloco WHERE ID = ?';
     connection.query(deletar, [id], (err, results) => {
         if(err) {
-            console.error("Erro ao deletar produto: ", err);
-            res.status(500).send("Erro ao deletar produto");
+            console.error("Erro ao deletar bloco: ", err);
+            res.status(500).send("Erro ao deletar bloco");
             return;
         }
         else {
-            console.log("Produto deletado com sucesso");
+            console.log("Bloco deletado com sucesso");
             res.redirect('/relatorio');
         }
     });
@@ -105,7 +105,6 @@ app.get('/deletar/:ID', (req, res) => {
 
 app.get('/atualizar/:ID', (req, res) => {
     const id = req.params.ID;
-    const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID = ?';
     const select = 'SELECT * FROM Bloco WHERE ID = ?';
 
     connection.query(select, [id], (err, rows) => {
@@ -120,7 +119,7 @@ app.get('/atualizar/:ID', (req, res) => {
                     </head>
                     <body>
                         <h1>Atualizar Produto</h1>
-                        <form action="/atualizar/${bloco.id}" method="POST">
+                        <form action="/atualizar/${bloco.ID}" method="POST">
                             <label for="nome">Nome do Bloco:</label>
                             <input type="text" id="nome" name="nome" 
                             value ="${bloco.descricao}" required><br><br>
@@ -137,21 +136,28 @@ app.get('/atualizar/:ID', (req, res) => {
                 </html>
                 `
             );
-            connection.query(update, [req.params.nome, req.params.quantidade, id], (err, results) => {
-                if(err) {
-                    console.error("Erro ao atualizar produto: ", err);
-                    res.status(500).send("Erro ao atualizar produto");
-                    return;
-                }
-                else {
-                    console.log("Produto atualizado com sucesso");
-                    res.redirect('/relatorio');
-                }
-            });
         } 
         else {
-            console.error("Erro ao buscar produto: ", err);
-            res.status(404).send("Produto não encontrado");
+            console.error("Erro ao buscar bloco: ", err);
+            res.status(404).send("Bloco não encontrado");
+        }
+    });
+});
+
+app.post('/atualizar/:ID', (req, res) => {
+    const id = req.params.ID;
+    const bloco = req.body.nome;
+    const quantidade = req.body.quantidade;
+
+    const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID = ?';
+    connection.query(update, [bloco, quantidade, id], (err, results) => {
+        if (err) {
+            console.error("Erro ao atualizar bloco: ", err);
+            res.status(500).send("Erro ao atualizar bloco");
+            return;
+        } else {
+            console.log("Bloco atualizado com sucesso");
+            res.redirect('/relatorio');
         }
     });
 });
