@@ -73,11 +73,11 @@ app.get('/relatorio', (req, res) => {
                     <tr>
                     ${rows.map(row => `
                         <tr>
-                            <td>${row.ID_bloco}</td>
+                            <td>${row.ID}</td>
                             <td>${row.descricao}</td>
                             <td>${row.qtd_apartamento}</td>
-                            <td><a href="/deletar/${row.id}">Deletar</a></td>
-                            <td><a href="/atualizar/${row.id}">Atualizar</a></td>
+                            <td><a href="/deletar/${row.ID}">Deletar</a></td>
+                            <td><a href="/atualizar/${row.ID}">Atualizar</a></td>
                         </tr>    
                     `).join('')}
                 </table>    
@@ -87,9 +87,9 @@ app.get('/relatorio', (req, res) => {
     });
 });
 
-app.get('/deletar/:id', (req, res) => {
-    const id = req.params.id;
-    const deletar = 'DELETE FROM Bloco WHERE ID_bloco = ?';
+app.get('/deletar/:ID', (req, res) => {
+    const id = req.params.ID;
+    const deletar = 'DELETE FROM Bloco WHERE ID = ?';
     connection.query(deletar, [id], (err, results) => {
         if(err) {
             console.error("Erro ao deletar produto: ", err);
@@ -103,9 +103,10 @@ app.get('/deletar/:id', (req, res) => {
     });
 });
 
-app.get('/atualizar/:id', (req, res) => {
-    const id = req.params.id;
-    const select = 'SELECT * FROM Bloco WHERE ID_bloco = ?';
+app.get('/atualizar/:ID', (req, res) => {
+    const id = req.params.ID;
+    const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID = ?';
+    const select = 'SELECT * FROM Bloco WHERE ID = ?';
 
     connection.query(select, [id], (err, rows) => {
         if (!err && rows.length > 0)
@@ -119,7 +120,7 @@ app.get('/atualizar/:id', (req, res) => {
                     </head>
                     <body>
                         <h1>Atualizar Produto</h1>
-                        <form action="/atualizar/${bloco.ID_bloco}" method="POST">
+                        <form action="/atualizar/${bloco.id}" method="POST">
                             <label for="nome">Nome do Bloco:</label>
                             <input type="text" id="nome" name="nome" 
                             value ="${bloco.descricao}" required><br><br>
@@ -136,6 +137,17 @@ app.get('/atualizar/:id', (req, res) => {
                 </html>
                 `
             );
+            connection.query(update, [req.params.nome, req.params.quantidade, id], (err, results) => {
+                if(err) {
+                    console.error("Erro ao atualizar produto: ", err);
+                    res.status(500).send("Erro ao atualizar produto");
+                    return;
+                }
+                else {
+                    console.log("Produto atualizado com sucesso");
+                    res.redirect('/relatorio');
+                }
+            });
         } 
         else {
             console.error("Erro ao buscar produto: ", err);
