@@ -11,7 +11,7 @@ const connection = mysql.createConnection ({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'controleEstoque'
+    database: 'condominio'
 });
 
 connection.connect (function(err) {
@@ -33,13 +33,12 @@ app.get('/cadastro', (req, res) => {
 });
 
 app.post('/cadastrar', (req, res) => {
-    const produto = req.body.nome;
+    const bloco = req.body.nome;
     const quantidade = req.body.quantidade;
-    const preco = req.body.preco;
 
     const insert = 
-        'INSERT INTO produtos (produto, quantidade, preco) VALUES (?, ?, ?)';
-    connection.query(insert, [produto, quantidade, preco], (err, results) => {
+        'INSERT INTO Bloco (descricao, qtd_apartamento) VALUES (?, ?)';
+    connection.query(insert, [bloco, quantidade], (err, results) => {
         if(err){
             console.error("Error to insert product: ", err);
             res.status(500).send("Error to register the product");
@@ -53,33 +52,32 @@ app.post('/cadastrar', (req, res) => {
 });
 
 app.get('/relatorio', (req, res) => {
-    const select = 'SELECT * FROM produtos;';
+    const select = 'SELECT * FROM Bloco;';
 
     connection.query(select, (err, rows) => {
         if(err) {
-            console.error("Erro ao listar produtos: ", err);
-            res.status(500).send('Erro ao listar produtos');
+            console.error("Erro ao listar blocos: ", err);
+            res.status(500).send('Erro ao listar blocos');
             return;
         }
         else {
-            console.log("Produtos listados com sucesso");
+            console.log("Blocos listados com sucesso");
             res.send(`
-                <h1>Lista de Produtos</h1>
+                <h1>Lista de Blocos</h1>
                 <table border="1">
                     <tr>
                         <th>ID</th>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Preçoo</th>
+                        <th>Descrição</th>
+                        <th>Qnt de Apartamentos</th>
                         <th>Ações</th>
                     <tr>
                     ${rows.map(row => `
                         <tr>
-                            <td>${row.id}</td>
-                            <td>${row.produto}</td>
-                            <td>${row.quantidade}</td>
-                            <td>${row.preco}</td>
+                            <td>${row.ID_bloco}</td>
+                            <td>${row.descricao}</td>
+                            <td>${row.qtd_apartamento}</td>
                             <td><a href="/deletar/${row.id}">Deletar</a></td>
+                            <td><a href="/atualizar/${row.id}">Atualizar</a></td>
                         </tr>    
                     `).join('')}
                 </table>    
@@ -91,7 +89,7 @@ app.get('/relatorio', (req, res) => {
 
 app.get('/deletar/:id', (req, res) => {
     const id = req.params.id;
-    const deletar = 'DELETE FROM produtos WHERE id = ?';
+    const deletar = 'DELETE FROM Bloco WHERE ID_bloco = ?';
     connection.query(deletar, [id], (err, results) => {
         if(err) {
             console.error("Erro ao deletar produto: ", err);
@@ -107,12 +105,12 @@ app.get('/deletar/:id', (req, res) => {
 
 app.get('/atualizar/:id', (req, res) => {
     const id = req.params.id;
-    const select = 'SELECT * FROM produtor WHERE id = ?';
+    const select = 'SELECT * FROM Bloco WHERE ID_bloco = ?';
 
     connection.query(select, [id], (err, rows) => {
         if (!err && rows.length > 0)
         {
-            const produto = rows[0];
+            const bloco = rows[0];
             res.send(
                 `
                 <html>
@@ -121,20 +119,16 @@ app.get('/atualizar/:id', (req, res) => {
                     </head>
                     <body>
                         <h1>Atualizar Produto</h1>
-                        <form action="/atualizar/${produto.id}" method="POST">
-                            <label for="nome">Nome:</label>
-                            <input type="text" id="nome" name="nome=" 
-                            value ="${produto.produto}" required><br><br>
+                        <form action="/atualizar/${bloco.ID_bloco}" method="POST">
+                            <label for="nome">Nome do Bloco:</label>
+                            <input type="text" id="nome" name="nome" 
+                            value ="${bloco.descricao}" required><br><br>
 
-                            <label for="quantidade">Quantidade:</label>
+                            <label for="quantidade">Quantidade de apartamentos:</label>
                             <input type="number" id="quantidade" name="quantidade"
-                            value="${produto.quantidade}" required><br><br>
+                            value="${bloco.qtd_apartamento}" required><br><br>
 
-                            <label for="preco">Preço:</label>
-                            <input type="number" step="0.01" id="preco" name="preco"
-                            value="${produto.preco}" required><br><br>
-
-                            <input type="submite" value="Atualizar">
+                            <input type="submit" value="Atualizar">
                         </form>
 
                         <a href="/relatorio">Voltar</a>
@@ -144,6 +138,7 @@ app.get('/atualizar/:id', (req, res) => {
             );
         } 
         else {
+            console.error("Erro ao buscar produto: ", err);
             res.status(404).send("Produto não encontrado");
         }
     });
