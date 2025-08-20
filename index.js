@@ -28,11 +28,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/cadastro', (req, res) => {
-    res.sendFile(__dirname + '/cadastro.html');
+app.get('/cadastroBloco', (req, res) => {
+    res.sendFile(__dirname + '/cadastroBloco.html');
 });
 
-app.post('/cadastrar', (req, res) => {
+app.post('/cadastrarBloco', (req, res) => {
     const bloco = req.body.nome;
     const quantidade = req.body.quantidade;
 
@@ -51,7 +51,7 @@ app.post('/cadastrar', (req, res) => {
     })
 });
 
-app.get('/relatorio', (req, res) => {
+app.get('/blocos', (req, res) => {
     const select = 'SELECT * FROM Bloco;';
 
     connection.query(select, (err, rows) => {
@@ -81,13 +81,14 @@ app.get('/relatorio', (req, res) => {
                         </tr>    
                     `).join('')}
                 </table>    
+                <a href="http://localhost:3000/cadastro">Cadastrar Bloco</a>
                 <a href="/">Voltar</a>
             `)
         }
     });
 });
 
-app.get('/deletar/:ID', (req, res) => {
+app.get('/deletarBloco/:ID', (req, res) => {
     const id = req.params.ID;
     const deletar = 'DELETE FROM Bloco WHERE ID = ?';
     connection.query(deletar, [id], (err, results) => {
@@ -103,7 +104,7 @@ app.get('/deletar/:ID', (req, res) => {
     });
 });
 
-app.get('/atualizar/:ID', (req, res) => {
+app.get('/atualizarBloco/:ID', (req, res) => {
     const id = req.params.ID;
     const select = 'SELECT * FROM Bloco WHERE ID = ?';
 
@@ -144,7 +145,7 @@ app.get('/atualizar/:ID', (req, res) => {
     });
 });
 
-app.post('/atualizar/:ID', (req, res) => {
+app.post('/atualizarBloco/:ID', (req, res) => {
     const id = req.params.ID;
     const bloco = req.body.nome;
     const quantidade = req.body.quantidade;
@@ -158,6 +159,84 @@ app.post('/atualizar/:ID', (req, res) => {
         } else {
             console.log("Bloco atualizado com sucesso");
             res.redirect('/relatorio');
+        }
+    });
+});
+
+app.get('/apartamentos', (req, res) => {
+    const select = 'SELECT * FROM apartamento;';
+
+    connection.query(select, (err, rows) => {
+        if(err) {
+            console.error("Erro ao listar apartamentos: ", err);
+            res.status(500).send('Erro ao listar apartamentos');
+            return;
+        }
+        else {
+            console.log("Apartamentos listados com sucesso");
+            res.send(`
+                <h1>Lista de Apartamentos</h1>
+                <table border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>Bloco</th>
+                        <th>Número do apartamento</th>
+                        <th>Ações</th>
+                    <tr>
+                    ${rows.map(row => `
+                        <tr>
+                            <td>${row.ID}</td>
+                            <td>${row.BlocoID}</td>
+                            <td>${row.numero_apartamento}</td>
+                            <td><a href="/deletar/${row.ID}">Deletar</a></td>
+                            <td><a href="/atualizar/${row.ID}">Atualizar</a></td>
+                        </tr>    
+                    `).join('')}
+                </table>    
+                <a href="http://localhost:3000/cadastroApartamento">Cadastrar Apartamento</a>
+                <a href="/">Voltar</a>
+            `)
+        }
+    });
+});
+
+app.get('/moradores', (req, res) => {
+    const select = 'SELECT * FROM morador;';
+
+    connection.query(select, (err, rows) => {
+        if(err) {
+            console.error("Erro ao listar moradores: ", err);
+            res.status(500).send('Erro ao listar moradores');
+            return;
+        }
+        else {
+            console.log("Moradores listados com sucesso");
+            res.send(`
+                <h1>Lista de Moradores</h1>
+                <table border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>CPF</th>
+                        <th>Nome</th>
+                        <th>Apartamento</th>
+                        <th>Bloco</th>
+                        <th>Ações</th>
+                    <tr>
+                    ${rows.map(row => `
+                        <tr>
+                            <td>${row.ID}</td>
+                            <td>${row.cpf}</td>
+                            <td>${row.nome}</td>
+                            <th>${apartamentoID}</td>
+                            <td>${blocoID}</td>
+                            <td><a href="/deletar/${row.ID}">Deletar</a></td>
+                            <td><a href="/atualizar/${row.ID}">Atualizar</a></td>
+                        </tr>    
+                    `).join('')}
+                </table>    
+                <a href="http://localhost:3000/cadastroMorador>Cadastrar Morador</a>
+                <a href="/">Voltar</a>
+            `);
         }
     });
 });
