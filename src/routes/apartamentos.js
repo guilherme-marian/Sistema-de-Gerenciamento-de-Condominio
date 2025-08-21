@@ -91,7 +91,7 @@ const apartamentoRouter = (connection) => {
         });
     });
 
-    router.get('/atualizaApartamento/:ID', (req, res) => {
+    router.get('/atualizarApartamento/:ID', (req, res) => {
         const id = req.params.ID;
         const select = 'SELECT * FROM apartamento WHERE ID = ?';
         const blocoOptions = blocos.map(b => `<option value="${b.blocoID}">${b.descricao}</option>`).join('');
