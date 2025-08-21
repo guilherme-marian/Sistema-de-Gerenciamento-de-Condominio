@@ -48,9 +48,11 @@ const blocoRouter = (connection) => {
                     <a href="http://localhost:3000/cadastroBloco">Cadastrar Bloco</a>
                     <a href="/">Voltar</a>
                 `)
-                }
-            });
+            }
         });
+    });
+    
+
 
     router.post('/cadastrarBloco', (req, res) => {
         const bloco = req.body.nome;
@@ -99,10 +101,10 @@ const blocoRouter = (connection) => {
                     `
                     <html>
                         <head>
-                            <title>Atualizar Produto</title>
+                            <title>Atualizar Bloco</title>
                         </head>
                         <body>
-                            <h1>Atualizar Produto</h1>
+                            <h1>Atualizar Bloco</h1>
                             <form action="/atualizar/${bloco.ID}" method="POST">
                                 <label for="nome">Nome do Bloco:</label>
                                 <input type="text" id="nome" name="nome" 
