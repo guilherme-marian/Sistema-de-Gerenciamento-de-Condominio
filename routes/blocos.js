@@ -37,7 +37,7 @@ const blocoRouter = (connection) => {
                         <tr>
                         ${rows.map(row => `
                             <tr>
-                                <td>${row.ID}</td>
+                                <td>${row.ID_Bloco}</td>
                                 <td>${row.descricao}</td>
                                 <td>${row.qtd_apartamento}</td>
                                 <td><a href="/deletarBloco/${row.ID}">Deletar</a></td>

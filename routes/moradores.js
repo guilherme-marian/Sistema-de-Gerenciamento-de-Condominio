@@ -50,6 +50,10 @@ const moradorRouter = (connection) => {
             }
         });
     });
+    
+    router.get('/cadastroMorador', (req, res) => {
+        res.sendFile(path.join(__dirname + '/../public/cadastroMorador.html'));
+    });
 
     return router;
 }
