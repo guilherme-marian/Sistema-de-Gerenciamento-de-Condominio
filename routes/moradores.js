@@ -55,6 +55,23 @@ const moradorRouter = (connection) => {
         res.sendFile(path.join(__dirname + '/../public/cadastroMorador.html'));
     });
 
+    router.post('/cadastrarMorador', (req, res) => {
+        const { cpf, nome, apartamentoID, blocoID } = req.body;
+        const insert = 'INSERT INTO morador (cpf, nome, apartamentoID, blocoID) VALUES (?, ?, ?, ?);';
+
+        connection.query(insert, [cpf, nome, apartamentoID, blocoID], (err, result) => {
+            if(err) {
+                console.error("Erro ao cadastrar morador: ", err);
+                res.status(500).send('Erro ao cadastrar morador');
+                return;
+            }
+            else {
+                console.log("Morador cadastrado com sucesso");
+                res.redirect('/moradores');
+            }
+        });
+    });
+
     return router;
 }
 
