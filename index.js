@@ -4,9 +4,9 @@ import mysql from 'mysql2';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import apartamentoRouter from './routes/apartamentos.js'
-import blocoRouter from './routes/blocos.js';
-import moradorRouter from './routes/moradores.js';
+import apartamentoRoute from './routes/apartamentos.js'
+import blocoRoute from './routes/blocos.js';
+import moradorRoute from './routes/moradores.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,9 +24,9 @@ const connection = mysql.createConnection ({
     database: 'condominio'
 });
 
-app.use(apartamentoRouter(connection));
-app.use(blocoRouter(connection));
-app.use(moradorRouter(connection));
+app.use(apartamentoRoute(connection));
+app.use(blocoRoute(connection));
+app.use(moradorRoute(connection));
 
 connection.connect (function(err) {
     if(err) {

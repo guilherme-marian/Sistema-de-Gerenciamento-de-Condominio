@@ -6,7 +6,7 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const blocoRouter = (connection) => {
+const blocoRoute = (connection) => {
     const router = Router();
 
     router.get('/cadastroBloco', (req, res) => {
@@ -34,14 +34,14 @@ const blocoRouter = (connection) => {
                             <th>Descrição</th>
                             <th>Qnt de Apartamentos</th>
                             <th>Ações</th>
-                        <tr>
+                        </tr>
                         ${rows.map(row => `
                             <tr>
                                 <td>${row.ID_Bloco}</td>
                                 <td>${row.descricao}</td>
                                 <td>${row.qtd_apartamento}</td>
-                                <td><a href="/deletarBloco/${row.ID}">Deletar</a></td>
-                                <td><a href="/atualizarBloco/${row.ID}">Atualizar</a></td>
+                                <td><a href="/deletarBloco/${row.ID_Bloco}">Deletar</a></td>
+                                <td><a href="/atualizarBloco/${row.ID_Bloco}">Atualizar</a></td>
                             </tr>    
                         `).join('')}
                     </table>    
@@ -68,19 +68,27 @@ const blocoRouter = (connection) => {
             }
             else {
                 console.log("Bloco inserido com sucesso!");
-                res.redirect('/');
+                res.redirect('/blocos');
             }
         })
     });
 
-    router.get('/deletarBloco/:ID', (req, res) => {
-        const id = req.params.ID;
-        const deletar = 'DELETE FROM Bloco WHERE ID = ?';
+    router.get('/deletarBloco/:ID_Bloco', (req, res) => {
+        const id = req.params.ID_Bloco;
+        const deletar = 'DELETE FROM Bloco WHERE ID_Bloco = ?';
         connection.query(deletar, [id], (err, results) => {
             if(err) {
-                console.error("Erro ao deletar bloco: ", err);
-                res.status(500).send("Erro ao deletar bloco");
-                return;
+                 if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+                    console.error("Erro ao deletar bloco: Existem apartamentos associados a este bloco.");
+                    res.status(400).send("Erro ao deletar bloco: Existem apartamentos associados a este bloco.");
+                    return;
+                }
+                else {
+                    console.error("Erro ao deletar bloco: ", err);
+                    res.status(500).send("Erro ao deletar bloco");
+                    return;
+                }
+                
             }
             else {
                 console.log("Bloco deletado com sucesso");
@@ -89,9 +97,10 @@ const blocoRouter = (connection) => {
         });
     });
 
-    router.get('/atualizarBloco/:ID', (req, res) => {
-        const id = req.params.ID;
-        const select = 'SELECT * FROM Bloco WHERE ID = ?';
+    router.get('/atualizarBloco/:ID_Bloco', (req, res) => {
+        const id = req.params.ID_Bloco;
+        console.log(id);
+        const select = 'SELECT * FROM Bloco WHERE ID_Bloco = ?';
 
         connection.query(select, [id], (err, rows) => {
             if (!err && rows.length > 0)
@@ -105,7 +114,7 @@ const blocoRouter = (connection) => {
                         </head>
                         <body>
                             <h1>Atualizar Bloco</h1>
-                            <form action="/atualizar/${bloco.ID}" method="POST">
+                            <form action="/atualizarBloco/${bloco.ID_Bloco}" method="POST">
                                 <label for="nome">Nome do Bloco:</label>
                                 <input type="text" id="nome" name="nome" 
                                 value ="${bloco.descricao}" required><br><br>
@@ -130,12 +139,12 @@ const blocoRouter = (connection) => {
         });
     });
 
-    router.post('/atualizarBloco/:ID', (req, res) => {
-        const id = req.params.ID;
+    router.post('/atualizarBloco/:ID_Bloco', (req, res) => {
+        const id = req.params.ID_Bloco;
         const bloco = req.body.nome;
         const quantidade = req.body.quantidade;
 
-        const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID = ?';
+        const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID_Bloco = ?';
         connection.query(update, [bloco, quantidade, id], (err, results) => {
             if (err) {
                 console.error("Erro ao atualizar bloco: ", err);
@@ -151,4 +160,4 @@ const blocoRouter = (connection) => {
     return router;
 }
 
-export default blocoRouter;
+export default blocoRoute;

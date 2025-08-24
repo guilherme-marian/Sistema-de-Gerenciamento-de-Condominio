@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const apartamentoRouter = (connection) => {
+const apartamentoRoute = (connection) => {
     const router = Router();
 
     router.get('/apartamentos', (req, res) => {
@@ -53,24 +53,31 @@ const apartamentoRouter = (connection) => {
             }
             else{
                 const blocoOptions = blocos.map(b => `<option value="${b.ID_Bloco}">${b.descricao}</option>`).join('');
-                res.send(`
-                    <html>
-                        <head><title>Cadastrar Apartamento</title></head>
-                        <body>
-                            <h1>Cadastrar Apartamento</h1>
-                            <form action="/cadastrarApartamento" method="POST">
-                                <label for="bloco">Bloco:</label>
-                                <select id="bloco" name="BlocoID" required>
-                                    ${blocoOptions}
-                                </select><br><br>
-                                <label for="numero_apartamento">Número do Apartamento:</label>
-                                <input type="text" id="numero_apartamento" name="numero_apartamento" required><br><br>
-                                <input type="submit" value="Cadastrar">
-                            </form>
-                            <a href="/apartamentos">Voltar</a>
-                        </body>
-                    </html>
-                `);
+                if(blocoOptions.length === 0) {
+                    res.status(400).send('Nenhum bloco cadastrado. Cadastre um bloco antes de cadastrar um apartamento. <br> <a href="/blocos">Ir para blocos</a>');
+                    return;
+                }
+                else {
+                    res.send(`
+                        <html>
+                            <head><title>Cadastrar Apartamento</title></head>
+                            <body>
+                                <h1>Cadastrar Apartamento</h1>
+                                <form action="/cadastrarApartamento" method="POST">
+                                    <label for="bloco">Bloco:</label>
+                                    <select id="blocoID" name="BlocoID" required>
+                                        ${blocoOptions}
+                                    </select><br><br>
+                                    <label for="numero_apartamento">Número do Apartamento:</label>
+                                    <input type="text" id="numero_apartamento" name="numero_apartamento" required><br><br>
+                                    <input type="submit" value="Cadastrar">
+                                </form>
+                                <a href="/apartamentos">Voltar</a>
+                            </body>
+                        </html>
+                    `);
+                }
+                
             }
             
         });
@@ -114,27 +121,33 @@ const apartamentoRouter = (connection) => {
             const blocoOptions = blocos.map(b => 
                 `<option value="${b.ID_Bloco}" ${b.ID_Bloco === apartamento.BlocoID ? 'selected' : ''}>${b.descricao}</option>`
             ).join('');
-
-            res.send(`
-                <html>
-                    <head>
-                        <title>Atualizar Apartamento</title>
-                    </head>
-                    <body>
-                        <h1>Atualizar Apartamento</h1>
-                        <form action="/atualizarApartamento/${id}" method="POST">
-                            <label for="bloco">Bloco:</label>
-                            <select id="bloco" name="BlocoID" required>
-                                ${blocoOptions}
-                            </select><br><br>
-                            <label for="numero_apartamento">Número do Apartamento:</label>
-                            <input type="text" id="numero_apartamento" name="numero_apartamento" value="${apartamento.numero_apartamento}" required><br><br>
-                            <input type="submit" value="Atualizar">
-                        </form>
-                        <a href="/apartamentos">Voltar</a>
-                    </body>
-                </html>
-            `);
+            if(blocoOptions.length === 0) {
+                res.status(400).send("Nenhum bloco cadastrado. Cadastre um bloco antes de atualizar um apartamento.");
+                return;
+            }
+            else {
+                res.send(`
+                    <html>
+                        <head>
+                            <title>Atualizar Apartamento</title>
+                        </head>
+                        <body>
+                            <h1>Atualizar Apartamento</h1>
+                            <form action="/atualizarApartamento/${id}" method="POST">
+                                <label for="bloco">Bloco:</label>
+                                <select id="bloco" name="BlocoID" required>
+                                    ${blocoOptions}
+                                </select><br><br>
+                                <label for="numero_apartamento">Número do Apartamento:</label>
+                                <input type="text" id="numero_apartamento" name="numero_apartamento" value="${apartamento.numero_apartamento}" required><br><br>
+                                <input type="submit" value="Atualizar">
+                            </form>
+                            <a href="/apartamentos">Voltar</a>
+                        </body>
+                    </html>
+                `);
+            }
+            
         });
         });
     });
@@ -163,9 +176,16 @@ const apartamentoRouter = (connection) => {
 
         connection.query(del, [id], (err, results) => {
             if(err) {
-                console.error("Erro ao deletar apartamento: ", err);
-                res.status(500).send("Erro ao deletar apartamento");
-                return;
+                if(err.code === 'ER_ROW_IS_REFERENCED_2') {
+                    res.status(400).send("Não é possível deletar este apartamento pois ele possuí um morador.");
+                    return;
+                }
+                else{
+                    console.error("Erro ao deletar apartamento: ", err);
+                    res.status(500).send("Erro ao deletar apartamento");
+                    return;
+                }
+                
             }
             else {
                 console.log("Apartamento deletado com sucesso");
@@ -177,4 +197,4 @@ const apartamentoRouter = (connection) => {
     return router;
 };
 
-export default apartamentoRouter;
+export default apartamentoRoute;
