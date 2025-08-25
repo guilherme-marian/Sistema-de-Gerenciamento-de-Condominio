@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import apartamentoRoute from './routes/apartamentos.js'
 import blocoRoute from './routes/blocos.js';
 import moradorRoute from './routes/moradores.js';
+import manutencaoRoute from './routes/manutencao.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +28,7 @@ const connection = mysql.createConnection ({
 app.use(apartamentoRoute(connection));
 app.use(blocoRoute(connection));
 app.use(moradorRoute(connection));
+app.use(manutencaoRoute(connection));
 
 connection.connect (function(err) {
     if(err) {
@@ -39,7 +41,7 @@ connection.connect (function(err) {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/src/public/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 
