@@ -8,6 +8,7 @@ import apartamentoRoute from './routes/apartamentos.js'
 import blocoRoute from './routes/blocos.js';
 import moradorRoute from './routes/moradores.js';
 import manutencaoRoute from './routes/manutencao.js';
+import pagamentoRoute from './routes/pagamentos.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,6 +30,7 @@ app.use(apartamentoRoute(connection));
 app.use(blocoRoute(connection));
 app.use(moradorRoute(connection));
 app.use(manutencaoRoute(connection));
+app.use(pagamentoRoute(connection));
 
 connection.connect (function(err) {
     if(err) {

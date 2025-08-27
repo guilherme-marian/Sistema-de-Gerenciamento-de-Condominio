@@ -12,7 +12,7 @@ const manutencaoRoute = (connection) => {
     const router = Router();
 
     router.get('/manutencao', (req, res) => {
-        const select = 'SELECT * FROM Manutencao';
+        const select = 'SELECT *, DATE_FORMAT(data_manutencao, "%d/%m/%Y") AS data FROM Manutencao';
 
         connection.query(select, (err, rows) => {
             if(err) {
@@ -36,12 +36,12 @@ const manutencaoRoute = (connection) => {
                                 <td>${row.ID_Manutencao}</td>
                                 <td>${row.tipo_manutencaoID}</td>
                                 <td>${row.local_manutencao}</td>
-                                <td>${row.data_manutencao}</td>
+                                <td>${row.data}</td>
                                 <td><a href="/deletarManutencao/${row.IDManutencao}">Deletar</a></td>
                                 <td><a href="/atualizarManutencao/${row.IDManutencao}">Atualizar</a></td>
-                            </tr>    
+                            </tr> 
                         `).join('')}
-                    </table>    
+                    </table> 
                     <a href="/cadastroManutencao">Cadastrar Manutenção</a>
                     <br>
                     <a href="/cadastroTipoManutencao">Cadastrar Tipo de Manutenção</a>
@@ -53,7 +53,7 @@ const manutencaoRoute = (connection) => {
 
     router.get('/cadastroManutencao', (req, res) => {
         connection.query('SELECT ID_TipoManutencao, descricao FROM TiposManutencao', (err, tipos) => {
-            if (err) { 
+            if (err) {
                 console.error("Erro ao buscar tipos de manutenção: ", err);
                 res.status(500).send("Erro ao buscar tipos de manutenção");
                 return;
