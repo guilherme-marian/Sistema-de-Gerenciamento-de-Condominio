@@ -1,3 +1,18 @@
+window.addEventListener('DOMContentLoaded', (event) => {
+    const possuiVeiculoSelect = document.getElementById('possuiVeiculo');
+    const carInfoDiv = document.getElementById('carInfo');
+    const quantidadeVagasInput = document.getElementById('quantidadeVagas');
+
+    if (possuiVeiculoSelect.value === 'Sim') {
+        showCarInfo();
+        setCarFieldsRequired(true);
+    }
+    else {
+        hideCarInfo();
+        setCarFieldsRequired(false);
+    }
+});
+
 function showCarInfo() {
     document.getElementById('carInfo').style.display = 'block';
 }
@@ -19,6 +34,7 @@ function setCarFieldsRequired(isRequired) {
 }
 
 const cpfInput = document.getElementById('cpf');
+
 cpfInput.addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 11) value = value.slice(0, 11);
@@ -35,4 +51,18 @@ cpfInput.addEventListener('input', function(e) {
     e.target.value = formattedValue;
 });
 
+const telefoneInput = document.getElementById('telefone');
 
+telefoneInput.addEventListener('input', () => {
+    let value = telefoneInput.value.replace(/\D/g, ''); 
+
+    if (value.length > 10) value = value.slice(0, 10); 
+
+    let formatted = '';
+
+    if (value.length >= 1) formatted += '(' + value.slice(0, 2);
+    if (value.length >= 3) formatted += ') ' + value.slice(2, 6);
+    if (value.length >= 7) formatted += '-' + value.slice(6, 10);
+
+    telefoneInput.value = formatted;
+});

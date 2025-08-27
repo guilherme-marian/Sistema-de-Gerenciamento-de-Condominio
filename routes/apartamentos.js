@@ -66,13 +66,16 @@ const apartamentoRoute = (connection) => {
                             <body>
                                 <h1>Cadastrar Apartamento</h1>
                                 <form action="/cadastrarApartamento" method="POST">
-                                    <label for="bloco">Bloco:</label>
-                                    <select id="blocoID" name="BlocoID" required>
-                                        ${blocoOptions}
-                                    </select><br><br>
-                                    <label for="numero_apartamento">Número do Apartamento:</label>
-                                    <input type="text" id="numero_apartamento" name="numero_apartamento" required><br><br>
-                                    <input type="submit" value="Cadastrar">
+                                    <fieldset>
+                                        <legend>Dados do Apartamento</legend>
+                                        <label for="bloco">Bloco:</label>
+                                        <select id="blocoID" name="BlocoID" required>
+                                            ${blocoOptions}
+                                        </select><br><br>
+                                        <label for="numero_apartamento">Número do Apartamento:</label>
+                                        <input type="text" id="numero_apartamento" name="numero_apartamento" required><br><br>
+                                        <input type="submit" value="Cadastrar">
+                                    </fieldset>
                                 </form>
                                 <a href="/apartamentos">Voltar</a>
                             </body>

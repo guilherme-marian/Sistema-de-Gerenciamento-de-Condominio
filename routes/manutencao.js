@@ -68,18 +68,21 @@ const manutencaoRoute = (connection) => {
                     res.send(`
                         <h1>Cadastro de Manutenção</h1>
                         <form action="/cadastrarManutencao" method="POST">
-                            <label for="tipoManutencaoID">Tipo de Manutenção:</label>
-                            <select id="tipoManutencaoID" name="tipoManutencaoID" required>
-                                ${tipoOptions} 
-                            </select>
-                            <br>
-                            <label for="localManutencao">Local da Manutenção:</label>
-                            <input type="text" id="localManutencao" name="localManutencao" required>
-                            <br>
-                            <label for="dataManutencao">Data da Manutenção:</label>
-                            <input type="date" id="dataManutencao" name="dataManutencao" required>
-                            <br>
-                            <input type="submit" value="Cadastrar">
+                            <fieldset>
+                                <legend>Cadastro de Manutenção</legend>
+                                <label for="tipoManutencaoID">Tipo de Manutenção:</label>
+                                <select id="tipoManutencaoID" name="tipoManutencaoID" required>
+                                    ${tipoOptions} 
+                                </select>
+                                <br>
+                                <label for="localManutencao">Local da Manutenção:</label>
+                                <input type="text" id="localManutencao" name="localManutencao" required>
+                                <br>
+                                <label for="dataManutencao">Data da Manutenção:</label>
+                                <input type="date" id="dataManutencao" name="dataManutencao" required>
+                                <br>
+                                <input type="submit" value="Cadastrar">
+                            </fieldset>
                         </form>
                         <a href="/manutencao">Voltar</a>
                     `);

@@ -6,12 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Cadastro de Bloco</h1>
+    <h1>Cadastro de Tipo de Manutenção</h1>
     <form action="/cadastrarTipoManutencao" method="POST">
-        <label for="tipoManutencao">Descrição da manutencao:</label>
-        <input type="text" id="tipoManutencao" name="tipoManutencao" required>
-        <br>
-        <input type="submit" value="Cadastrar">
+        <fieldset>
+            <legend>Cadastro de Tipo de Manutenção</legend>
+
+            <label for="tipoManutencao">Descrição da manutencao:</label>
+            <input type="text" id="tipoManutencao" name="tipoManutencao" required>
+            <br>
+            <input type="submit" value="Cadastrar">
+        </fieldset>
     </form>
     <p><a href="http://localhost:3000/">Voltar para Home</a></p>
 </body>
