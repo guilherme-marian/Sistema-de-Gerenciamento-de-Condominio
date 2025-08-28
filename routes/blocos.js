@@ -16,39 +16,53 @@ const blocoRoute = (connection) => {
 
     router.get('/blocos', (req, res) => {
 
-        const select = 'SELECT * FROM Bloco;';
+        const search = req.query.search || '';
+        const select = 'SELECT * FROM Bloco WHERE descricao LIKE ?';
+        const searchQuery = [`%${search}%`];
 
-        connection.query(select, (err, rows) => {
+        connection.query(select, searchQuery, (err, rows) => {
             if(err) {
                 console.error("Erro ao listar blocos: ", err);
                 res.status(500).send('Erro ao listar blocos');
                 return;
             }
-            else {
+            if (req.headers.accept.includes('application/json')) {
+            return res.json(rows);
+            }
+
                 console.log("Blocos listados com sucesso");
                 res.send(`
                     <h1>Lista de Blocos</h1>
+
+                    <form action="/blocos" method="GET">
+                        <input type="text" name="search" placeholder="Pesquisar por descrição">
+                        <button type="submit">Pesquisar</button>
+                    </form>
+
                     <table border="1">
-                        <tr>
-                            <th>ID</th>
-                            <th>Descrição</th>
-                            <th>Qnt de Apartamentos</th>
-                            <th>Ações</th>
-                        </tr>
-                        ${rows.map(row => `
+                        <thead>
                             <tr>
-                                <td>${row.ID_Bloco}</td>
-                                <td>${row.descricao}</td>
-                                <td>${row.qtd_apartamento}</td>
-                                <td><a href="/deletarBloco/${row.ID_Bloco}">Deletar</a></td>
-                                <td><a href="/atualizarBloco/${row.ID_Bloco}">Atualizar</a></td>
-                            </tr>    
-                        `).join('')}
-                    </table>    
-                    <a href="http://localhost:3000/cadastroBloco">Cadastrar Bloco</a>
-                    <a href="/">Voltar</a>
-                `)
-            }
+                                <th>ID</th>
+                                <th>Descrição</th>
+                                <th>Qnt de Apartamentos</th>
+                                <th colspan="2">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-blocos">
+                    ${rows.map(row => `
+                        <tr>
+                            <td>${row.ID_Bloco}</td>
+                            <td>${row.descricao}</td>
+                            <td>${row.qtd_apartamento}</td>
+                            <td><a href="/confirmarDeletarBloco/${row.ID_Bloco}">Deletar</a></td>
+                            <td><a href="/atualizarBloco/${row.ID_Bloco}">Atualizar</a></td>
+                        </tr>    
+                    `).join('')}
+                </table>    
+                <a href="http://localhost:3000/cadastroBloco">Cadastrar Bloco</a>
+                <a href="/">Voltar</a>
+
+            `)
         });
     });
     
@@ -71,6 +85,19 @@ const blocoRoute = (connection) => {
                 res.redirect('/blocos');
             }
         })
+    });
+
+    router.get('/confirmarDeletarBloco/:ID_Bloco', (req, res) => {
+        const id = req.params.ID_Bloco;
+
+        res.send(`
+            <h1>Confirmar Deleção</h1>
+            <p>Tem certeza que deseja deletar o bloco?</p>
+            <form action="/deletarBloco/${id}" method="GET">
+                <button type="submit">Sim, deletar</button>
+            </form>
+            <a href="/blocos">Cancelar</a>
+        `);
     });
 
     router.get('/deletarBloco/:ID_Bloco', (req, res) => {

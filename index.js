@@ -9,6 +9,7 @@ import blocoRoute from './routes/blocos.js';
 import moradorRoute from './routes/moradores.js';
 import manutencaoRoute from './routes/manutencao.js';
 import pagamentoRoute from './routes/pagamentos.js';
+import garagemRoute from './routes/garagem.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,6 +32,7 @@ app.use(blocoRoute(connection));
 app.use(moradorRoute(connection));
 app.use(manutencaoRoute(connection));
 app.use(pagamentoRoute(connection));
+app.use(garagemRoute(connection));
 
 connection.connect (function(err) {
     if(err) {
@@ -38,7 +40,7 @@ connection.connect (function(err) {
         return;
     }
     else {
-        console.log("Ok Connection");
+        console.log("Conexão bem sucedida!");
     }
 });
 
@@ -48,5 +50,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(3000, () => {
-    console.log('Server running http://localhost:3000');
+    console.log('Server rodando: http://localhost:3000');
 });

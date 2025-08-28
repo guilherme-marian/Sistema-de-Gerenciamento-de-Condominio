@@ -11,9 +11,15 @@ const apartamentoRoute = (connection) => {
     const router = Router();
 
     router.get('/apartamentos', (req, res) => {
-        const select = 'SELECT *, Bloco.ID_Bloco, Bloco.descricao AS bloco_nome FROM apartamento JOIN Bloco ON apartamento.BlocoID = Bloco.ID_Bloco';
+
+        const search = req.query.search || '';
+        const searchQuery = [`%${search}%`];
+        const select = `SELECT *, Bloco.ID_Bloco, Bloco.descricao AS bloco_nome 
+        FROM apartamento 
+        JOIN Bloco ON apartamento.BlocoID = Bloco.ID_Bloco
+        WHERE numero_apartamento LIKE ?`;
         
-        connection.query(select, (err, rows) => {
+        connection.query(select, searchQuery, (err, rows) => {
             if(err) {
                 console.error("Erro ao listar apartamentos: ", err);
                 res.status(500).send('Erro ao listar apartamentos');
@@ -22,19 +28,24 @@ const apartamentoRoute = (connection) => {
             else {
                 res.send(`
                     <h1>Lista de Apartamentos</h1>
+
+                    <form action="/apartamentos" method="GET">
+                        <input type="text" name="search" placeholder="Pesquisar por número do apartamento">
+                        <button type="submit">Pesquisar</button>
+                    </form>
                     <table border="1">
                         <tr>
                             <th>ID</th>
                             <th>Bloco</th>
                             <th>Número do apartamento</th>
-                            <th>Ações</th>
+                            <th colspan="2">Ações</th>
                         </tr>
                         ${rows.map(row => `
                             <tr>
                                 <td>${row.ID_Apartamento}</td>
                                 <td value>${row.bloco_nome}</td>
                                 <td>${row.numero_apartamento}</td>
-                                <td><a href="/deletarApartamento/${row.ID_Apartamento}">Deletar</a></td>
+                                <td><a href="/confirmarDeletarApartamento/${row.ID_Apartamento}">Deletar</a></td>
                                 <td><a href="/atualizarApartamento/${row.ID_Apartamento}">Atualizar</a></td>
                             </tr>    
                         `).join('')}
@@ -70,6 +81,7 @@ const apartamentoRoute = (connection) => {
                                         <legend>Dados do Apartamento</legend>
                                         <label for="bloco">Bloco:</label>
                                         <select id="blocoID" name="BlocoID" required>
+                                            <option value="" disabled selected>Selecione um Bloco</option>
                                             ${blocoOptions}
                                         </select><br><br>
                                         <label for="numero_apartamento">Número do Apartamento:</label>
@@ -173,6 +185,19 @@ const apartamentoRoute = (connection) => {
                 res.redirect('/apartamentos');
             }
         });
+    });
+
+    router.get('/confirmarDeletarApartamento/:ID_Apartamento', (req, res) => {
+        const id = req.params.ID_Apartamento;
+
+        res.send(`
+            <h1>Confirmar Deleção</h1>
+            <p>Tem certeza que deseja deletar o apartamento?</p>
+            <form action="/deletarApartamento/${id}" method="GET">
+                <button type="submit">Sim, deletar</button>
+            </form>
+            <a href="/apartamentos">Cancelar</a>
+        `);
     });
 
     router.get('/deletarApartamento/:ID_Apartamento', (req, res) => {

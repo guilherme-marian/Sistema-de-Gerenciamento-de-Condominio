@@ -11,15 +11,19 @@ const moradorRoute = (connection) => {
     const router = Router();
 
     router.get('/moradores', (req, res) => {
+
+        const search = req.query.search || '';
         const select = `SELECT 
             m.ID_Morador, m.cpf, m.nome, m.telefone,
             a.numero_apartamento,
             b.descricao AS bloco_nome
             FROM morador m
             INNER JOIN apartamento a ON m.apartamentoID = a.ID_Apartamento
-            INNER JOIN bloco b ON m.blocoID = b.ID_Bloco;`;
+            INNER JOIN bloco b ON m.blocoID = b.ID_Bloco
+            WHERE m.nome LIKE ? OR m.cpf LIKE ?;`;
 
-        connection.query(select, (err, rows) => {
+        const searchParam = `%${search}%`;
+        connection.query(select, [searchParam, searchParam], (err, rows) => {
             if(err) {
                 console.error("Erro ao listar moradores: ", err);
                 res.status(500).send('Erro ao listar moradores');
@@ -30,6 +34,12 @@ const moradorRoute = (connection) => {
                 console.log("Moradores listados com sucesso");
                 res.send(`
                     <h1>Lista de Moradores</h1>
+
+                    <form method="GET" action="/moradores">
+                        <input type="text" name="search" placeholder="Buscar por nome ou CPF" value="${search}">
+                        <button type="submit">Buscar</button>
+                    </form>
+
                     <table border="1">
                         <tr>
                             <th>ID</th>
@@ -38,7 +48,7 @@ const moradorRoute = (connection) => {
                             <th>Telefone</th>
                             <th>Apartamento</th>
                             <th>bloco</th>
-                            <th>Ações</th>
+                            <th colspan="2">Ações</th>
                         </tr>
                         ${rows.map(row => `
                             <tr>
@@ -48,7 +58,7 @@ const moradorRoute = (connection) => {
                                 <td>${row.telefone}</td>
                                 <td>${row.numero_apartamento}</td>
                                 <td>${row.bloco_nome}</td>  
-                                <td><a href="/deletarMorador/${row.ID_Morador}">Deletar</a></td>
+                                <td><a href="/confirmarDeletarMorador/${row.ID_Morador}">Deletar</a></td>
                                 <td><a href="/atualizarMorador/${row.ID_Morador}">Atualizar</a></td>
                             </tr>    
                         `).join('')}
@@ -61,7 +71,7 @@ const moradorRoute = (connection) => {
     });
     
     router.get('/cadastroMorador', (req, res) => {
-        const apartamentoSelect = `SELECT A. numero_apartamento 
+        const apartamentoSelect = `SELECT A.numero_apartamento , A.ID_Apartamento, B.descricao
         FROM Apartamento A
         JOIN Bloco B ON A.BlocoID = B.ID_Bloco;`;
 
@@ -99,32 +109,33 @@ const moradorRoute = (connection) => {
                             
                             <label for="apartamento">Apartamento:</label>
                             <select id="apartamento" name="apartamentoID" required>
+                                <option value="" disabled selected>Selecione um Apartamento</option>
                                 ${apartamentosOptions}
                             </select>
                             <br>
 
                             <label for="bloco">Bloco:</label>
-                            <input type="text" id="bloco" name="bloco" readonly>
+                            <input type="text" id="bloco" name="bloco" autocomplete="on" readonly>
 
                             <br>
                             <label for="responsavel">Responsável pelo apartamento?</label>
-                            <input type="radio" id="simResponsavel" name="responsavel" value="sim" required>
+                            <input type="radio" id="simResponsavel" name="responsavel" value="Sim" required>
                             <label for="simResponsavel">Sim</label>
-                            <input type="radio" id="naoResponsavel" name="responsavel" value="nao" required>
+                            <input type="radio" id="naoResponsavel" name="responsavel" value="Não" required>
                             <label for="naoResponsavel">Não</label>
                             
                             <br>
                             <label for="proprietario">Proprietário do apartamento?</label>
-                            <input type="radio" id="simProprietario" name="proprietario" value="sim" required>
+                            <input type="radio" id="simProprietario" name="proprietario" value="Sim" required>
                             <label for="simProprietario">Sim</label>
-                            <input type="radio" id="naoProprietario" name="proprietario" value="nao" required>
+                            <input type="radio" id="naoProprietario" name="proprietario" value="Não" required>
                             <label for="naoProprietario">Não</label>
                             <br>
 
                             <label for="veiculo">Possui veículo?</label>
-                            <input type="radio" id="simVeiculo" name="veiculo" value="sim" onClick="showCarInfo()" required>
+                            <input type="radio" id="simVeiculo" name="veiculo" value="Sim" onClick="showCarInfo()" required>
                             <label for="simVeiculo">Sim</label>
-                            <input type="radio" id="naoVeiculo" name="veiculo" value="nao" onClick="hideCarInfo()" required>
+                            <input type="radio" id="naoVeiculo" name="veiculo" value="Não" onClick="hideCarInfo()" required>
                             <label for="naoVeiculo">Não</label>
                             <br>
 
@@ -139,7 +150,7 @@ const moradorRoute = (connection) => {
                                 <input type="text" name="numeroVaga" id="numeroVaga">
                                 <br>
                                 <label for="placa">Placa:</label>
-                                <input type="text" id="placa" name="placa">
+                                <input type="text" id="placa" maxLength=8 name="placa">
                                 <label for="marca">Marca:</label>
                                 <input type="text" id="marca" name="marca">
                                 <br>
@@ -151,7 +162,7 @@ const moradorRoute = (connection) => {
                     
                         <input type="submit">
                     </form>
-                    <p><a href="http://localhost:3000/">Voltar para Home</a></p>
+                    <p><a href="http://localhost:3000/moradores">Voltar</a></p>
 
                     <script src="/js/app.js"></script>
                     <script src="/js/autoCompleteMorador.js"></script>
@@ -185,28 +196,48 @@ const moradorRoute = (connection) => {
                     }
                     else {
                         console.log("Morador cadastrado com sucesso");
-                        res.redirect('/moradores');
+                        
                     }
-                });
-            }
-            if(veiculo === 'sim')
-            {
-                const donoID = req.params.ID_Morador;
-                const {quantidadeVagas, numeroVaga, Placa, marca, modelo} = req.body;
-                const insertVeiculo = 'INSERT INTO Veiculos (donoID, placa, marca, modelo) VALUES (?, ?, ?, ?);';
+                
 
-                connection.query(insertVeiculo, [donoID, Placa, marca, modelo], (err, result) => {
-                    if(err) {
-                        console.error("Erro ao cadastrar veiculo: ", err);
-                        res.status(500).send('Erro ao cadastrar veiculo');
-                        return;
-                    }
-                    else {
-                        console.log("Veiculo cadastrado com sucesso");
-                    }
-                });
+                const donoID = result.insertId;
+
+                if(veiculo === 'Sim')
+                {
+                    const {quantidadeVagas, numeroVaga, placa, marca, modelo} = req.body;
+                    const insertVeiculo = 'INSERT INTO Veiculos ( donoID, quantidade_vagas, numero_vaga, placa, marca, modelo) VALUES (?, ?, ?, ?, ?, ?);';
+
+                    connection.query(insertVeiculo, [donoID, quantidadeVagas, numeroVaga, placa, marca, modelo], (err, result) => {
+                        if(err) {
+                            console.error("Erro ao cadastrar veiculo: ", err);
+                            res.status(500).send('Erro ao cadastrar veiculo');
+                            return;
+                        }
+                        else {
+                            console.log("Veiculo cadastrado com sucesso");
+                            res.redirect('/moradores');
+                        }
+                    });
+                }
+                else {
+                    res.redirect('/moradores');
+                }
+            });
             }
         });
+    });
+
+    router.get('/confirmarDeletarMorador/:ID_Morador', (req, res) => {
+        const id = req.params.ID_Morador;
+
+        res.send(`
+            <h1>Confirmar Deleção de Morador</h1>
+            <p>Tem certeza que deseja deletar o morador?</p>
+            <form action="/deletarMorador/${id}" method="GET">
+                <input type="submit" value="Confirmar Deleção">
+            </form>
+            <p><a href="http://localhost:3000/moradores">Cancelar</a></p>
+        `);
     });
 
     router.get('/deletarMorador/:ID_Morador', (req, res) => {
@@ -222,15 +253,12 @@ const moradorRoute = (connection) => {
                             return;
                         }
                     });
-                    
                 }
                 else {
                    console.error("Erro ao deletar morador: ", err);
                     res.status(500).send("Erro ao deletar morador");
                     return;
-                }
-                
-                
+                }   
             }
             else {
                 console.log("Morador deletado com sucesso");
@@ -241,7 +269,8 @@ const moradorRoute = (connection) => {
 
     router.get('/atualizarMorador/:ID_Morador', (req, res) => {
         const id = req.params.ID_Morador;
-        const selectMorador = `SELECT M.cpf, M.nome, M.telefone, M.responsavel, M.proprietario, M.possui_veiculo
+        const selectMorador = `SELECT M.cpf, M.nome, M.telefone, M.responsavel, M.proprietario,
+        M.possui_veiculo, V.quantidade_vagas, V.numero_vaga, V.placa, V.marca, V.modelo, M.apartamentoID
         FROM Morador M
         LEFT JOIN Veiculos V ON M.ID_Morador = V.donoID
         WHERE ID_Morador = ?;`;
@@ -316,13 +345,13 @@ const moradorRoute = (connection) => {
                                 <div id="carInfo" style="display:none;">
                                 <fieldset>
                                     <legend>Dados do Veículo</legend>                                        <label for="quantidadeVagas">Quantidade de vagas de garagem: </label>
-                                    <input type="number" name="quantidadeVagas" id="quantidadeVagas" min="0" value="${morador.quantidadeVagas || 0}">
+                                    <input type="number" name="quantidadeVagas" id="quantidadeVagas" min="0" value="${morador.quantidade_vagas || 0}">
                                     <br>
                                     <label for="numeroVaga">Número da vaga: </label>
-                                    <input type="text" name="numeroVaga" id="numeroVaga" value="${morador.numeroVaga || ''}">
+                                    <input type="text" name="numeroVaga" id="numeroVaga" maxLength="20" value="${morador.numero_vaga || ''}">
                                     <br>
                                     <label for="placa">Placa:</label>
-                                    <input type="text" id="placa" name="placa" value="${morador.placa || ''}">
+                                    <input type="text" id="placa" name="placa" maxLength=8 value="${morador.placa || ''}">
                                     <label for="marca">Marca:</label>
                                     <input type="text" id="marca" name="marca" value="${morador.marca || ''}">
                                     <br>
@@ -335,6 +364,16 @@ const moradorRoute = (connection) => {
                             </form>
                             
                             <script src="/js/app.js"></script>
+                            <script>
+                                window.onload = function() {
+                                    const possuiVeiculo = "${morador.possui_veiculo}";
+                                    if(possuiVeiculo === 'Sim') {
+                                        showCarInfo();
+                                    } else {
+                                        hideCarInfo();
+                                    }
+                                };
+                            </script>
                             <p><a href="http://localhost:3000/moradores">Voltar para Moradores</a></p>
                         `);
                     }
@@ -346,6 +385,7 @@ const moradorRoute = (connection) => {
     router.post('/atualizarMorador/:ID_Morador', (req, res) => {
         const id = req.params.ID_Morador;
         const { cpf, nome, telefone, apartamentoID, responsavel, proprietario, veiculo } = req.body;
+        console.log(veiculo);
         const blocoIDQuery = 'SELECT BlocoID FROM Apartamento WHERE ID_Apartamento = ?;';
 
         connection.query(blocoIDQuery, [apartamentoID], (err, blocoRows) => {
@@ -356,7 +396,7 @@ const moradorRoute = (connection) => {
             }
             else {
                 const blocoID = blocoRows[0].BlocoID;
-                const update = 'UPDATE Morador SET cpf = ?, nome = ?, telefone = ?, apartamentoID = ?, blocoID = ?, responsavel = ?, proprietario = ?, possui_veiculo = ? WHERE ID_MORADOR = ?';
+                const update = 'UPDATE Morador SET cpf = ?, nome = ?, telefone = ?, apartamentoID = ?, blocoID = ?, responsavel = ?, proprietario = ?, possui_veiculo = ? WHERE ID_Morador = ?';
 
                 connection.query(update, [cpf, nome, telefone, apartamentoID, blocoID, responsavel, proprietario, veiculo, id], (err, result) => {
                     if(err) {
@@ -366,53 +406,69 @@ const moradorRoute = (connection) => {
                     }
                     else {
                         console.log("Morador atualizado com sucesso");
+
+                        if(veiculo && veiculo.toLowerCase() === 'sim')
+                        {
+                        const {quantidadeVagas, numeroVaga, placa, marca, modelo} = req.body;
+                        
+                        const checkVeiculo = 'SELECT * FROM Veiculos WHERE donoID = ?;';
+                        connection.query(checkVeiculo, [id], (err, veiculoRows) => {
+                            if(err) {
+                                console.error("Erro ao verificar veículo: ", err);
+                                res.status(500).send('Erro ao verificar veículo');
+                                return;
+                            }
+                            else if(veiculoRows.length > 0) {
+                                const updateVeiculo = 'UPDATE Veiculos SET placa = ?, marca = ?, modelo = ?, quantidade_vagas = ?, numero_vaga = ? WHERE donoID = ?;';
+                                connection.query(updateVeiculo, [placa, marca, modelo, quantidadeVagas, numeroVaga, id], (err, result) => {
+                                    if(err) {
+                                        console.error("Erro ao atualizar veículo: ", err);
+                                        res.status(500).send('Erro ao atualizar veículo');
+                                        return;
+                                    }
+                                    else {
+                                        console.log("Veículo atualizado com sucesso");
+                                        return res.redirect('/moradores');
+                                    }
+                                });
+                            }
+                            else {
+                                const insertVeiculo = 'INSERT INTO Veiculos (donoID, placa, marca, modelo, quantidade_vagas, numero_vaga) VALUES (?, ?, ?, ?, ?, ?);';
+
+                                connection.query(insertVeiculo, [id, placa, marca, modelo, quantidadeVagas, numeroVaga], (err, result) => {
+                                    if(err) {
+                                        console.error("Erro ao cadastrar veiculo: ", err);
+                                        res.status(500).send('Erro ao cadastrar veiculo');
+                                        return;
+                                    }
+                                    else {
+                                        console.log("Veiculo cadastrado com sucesso");
+                                        return res.redirect('/moradores');   
+                                    }
+                                });
+                            }
+                        });
+
+                        }
+                        else
+                        {
+                            const deleteVeiculo = 'DELETE FROM Veiculos WHERE donoID = ?;';
+                            connection.query(deleteVeiculo, [id], (err, result) => {
+                                if(err) {
+                                    console.error("Erro ao deletar veículo: ", err);
+                                    res.status(500).send('Erro ao deletar veículo');
+                                    return;
+                                }
+                                else {
+                                    console.log("Veículo deletado com sucesso");
+                                    return res.redirect('/moradores');
+                                }      
+                            });
+                        }
                     }
-                });
-
-                if(veiculo === 'sim')
-                {
-
-                    const donoID = req.params.ID_Morador;
-                    const {quantidadeVagas, numeroVaga, placa, marca, modelo} = req.body;
-                    
-                    const checkVeiculo = 'SELECT * FROM Veiculos WHERE donoID = ?;';
-                    connection.query(checkVeiculo, [donoID], (err, veiculoRows) => {
-                        if(err) {
-                            console.error("Erro ao verificar veículo: ", err);
-                            res.status(500).send('Erro ao verificar veículo');
-                            return;
-                        }
-                        else if(veiculoRows.length > 0) {
-                            const updateVeiculo = 'UPDATE Veiculos SET placa = ?, marca = ?, modelo = ? WHERE donoID = ?;';
-                            connection.query(updateVeiculo, [placa, marca, modelo, donoID], (err, result) => {
-                                if(err) {
-                                    console.error("Erro ao atualizar veículo: ", err);
-                                    res.status(500).send('Erro ao atualizar veículo');
-                                    return;
-                                }
-                                else {
-                                    console.log("Veículo atualizado com sucesso");
-                                }
-                            });
-                        }
-                        else {
-                            const insertVeiculo = 'INSERT INTO Veiculos (donoID, placa, marca, modelo) VALUES (?, ?, ?, ?);';
-
-                            connection.query(insertVeiculo, [donoID, placa, marca, modelo], (err, result) => {
-                                if(err) {
-                                    console.error("Erro ao cadastrar veiculo: ", err);
-                                    res.status(500).send('Erro ao cadastrar veiculo');
-                                    return;
-                                }
-                                else {
-                                    console.log("Veiculo cadastrado com sucesso");
-                                }
-                            });
-                        }
-                    });
-                }
+                });      
             }
-            res.redirect('/moradores');
+            
         });
     });
 

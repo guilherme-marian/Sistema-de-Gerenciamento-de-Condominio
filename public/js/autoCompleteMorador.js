@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Script loaded and DOM ready.");
 
-    const select = document.getElementById('apartamentoID');
+    const select = document.getElementById('apartamento');
     const blocoInput = document.getElementById('bloco');
 
     if (!select || !blocoInput) {
