@@ -1,0 +1,190 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.title{
+    color: #2c3e50;
+    margin-bottom: 0.1rem;
+}
+
+.subtitle{
+    color: #34495e;
+    margin-bottom: 0.1rem;
+}
+
+.Options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.Options a {
+    display: block;
+    text-decoration: none;
+    background-color: #3498db;
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.Options a:hover {
+    background-color: #2980b9;
+}
+
+.search {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+}
+
+.search input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.search button{
+    background-color: #3498db;
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.search button:hover {
+    background-color: #2980b9;
+}
+
+.tables {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.tables th {
+    border: 1px solid #ddd;
+    background-color: #b9b9b9;
+    padding: 0.75rem;
+}
+
+.tables td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+}
+.tables a {
+    background-color: #f9f9f9;
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.tables a:hover {
+    text-decoration: underline;
+}
+
+.selections{
+    display:block;
+    text-align: center;
+    margin-top: 0.5rem;
+    text-decoration: none;
+    background-color: #3498db;
+    border-radius: 4px;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.selections:hover {
+    background-color: #2980b9;
+}
+
+.selections a {
+    color: white;
+    text-decoration: none;
+}
+
+.cadastro {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.cadastro label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.cadastro legend {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.cadastro input[type="text"], .cadastro input[type="number"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cadastro fieldset {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+
+
+.cadastro select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.2rem;
+    transition: 0.2s ease;
+}
+
+.cadastro select, ::picker(select) {
+    appearance: none;
+}
+
+.cadastro option {
+    
+}
+
+.submit {
+    background-color: #3498db;
+    margin-top: 0.5rem;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}

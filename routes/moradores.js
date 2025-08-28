@@ -190,9 +190,16 @@ const moradorRoute = (connection) => {
 
                 connection.query(insert, [cpf, nome, telefone, apartamentoID, blocoID, responsavel, proprietario, veiculo], (err, result) => {
                     if(err) {
-                        console.error("Erro ao cadastrar morador: ", err);
-                        res.status(500).send('Erro ao cadastrar morador');
-                        return;
+                        if(err.code === 'ER_DUP_ENTRY') {
+                            res.status(400).send('CPF já cadastrado. <br> <a href="http://localhost:3000/cadastroMorador">Voltar</a>');
+                            return;
+                        }
+                        else {
+                            console.error("Erro ao cadastrar morador: ", err);
+                            res.status(500).send('Erro ao cadastrar morador');
+                            return;
+                        }
+                        
                     }
                     else {
                         console.log("Morador cadastrado com sucesso");
@@ -385,7 +392,6 @@ const moradorRoute = (connection) => {
     router.post('/atualizarMorador/:ID_Morador', (req, res) => {
         const id = req.params.ID_Morador;
         const { cpf, nome, telefone, apartamentoID, responsavel, proprietario, veiculo } = req.body;
-        console.log(veiculo);
         const blocoIDQuery = 'SELECT BlocoID FROM Apartamento WHERE ID_Apartamento = ?;';
 
         connection.query(blocoIDQuery, [apartamentoID], (err, blocoRows) => {
@@ -400,9 +406,15 @@ const moradorRoute = (connection) => {
 
                 connection.query(update, [cpf, nome, telefone, apartamentoID, blocoID, responsavel, proprietario, veiculo, id], (err, result) => {
                     if(err) {
-                        console.error("Erro ao atualizar morador: ", err);
-                        res.status(500).send('Erro ao atualizar morador');
-                        return;
+                        if(err.code === 'ER_DUP_ENTRY') {
+                            res.status(400).send('CPF já cadastrado. <br> <a href="http://localhost:3000/moradores">Voltar</a>');
+                            return;
+                        }
+                        else {
+                            console.error("Erro ao atualizar morador: ", err);
+                            res.status(500).send('Erro ao atualizar morador');
+                            return;
+                        }
                     }
                     else {
                         console.log("Morador atualizado com sucesso");

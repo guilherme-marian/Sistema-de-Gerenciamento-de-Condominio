@@ -27,13 +27,17 @@ const apartamentoRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Lista de Apartamentos</h1>
+                    <link rel="stylesheet" href="/css/style.css">
+                    
+                    <h1 class="title">Condomínio</h1>
 
-                    <form action="/apartamentos" method="GET">
+                    <h2 class="subtitle">Apartamentos<h2>
+
+                    <form class="search" action="/apartamentos" method="GET">
                         <input type="text" name="search" placeholder="Pesquisar por número do apartamento">
                         <button type="submit">Pesquisar</button>
                     </form>
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>Bloco</th>
@@ -50,8 +54,8 @@ const apartamentoRoute = (connection) => {
                             </tr>    
                         `).join('')}
                     </table>    
-                    <a href="/cadastroApartamento">Cadastrar Apartamento</a>
-                    <a href="/">Voltar</a>
+                    <a class="selections" href="/cadastroApartamento">Cadastrar Apartamento</a>
+                    <a class="selections" href="/">Voltar</a>
                 `)
             }
         });
@@ -73,10 +77,13 @@ const apartamentoRoute = (connection) => {
                 else {
                     res.send(`
                         <html>
-                            <head><title>Cadastrar Apartamento</title></head>
+                            <link rel="stylesheet" href="/css/style.css">
+
+                            <head><title>Condomínio</title></head>
                             <body>
-                                <h1>Cadastrar Apartamento</h1>
-                                <form action="/cadastrarApartamento" method="POST">
+                                <h1>Condomínio</h1>
+
+                                <form class="cadastro" action="/cadastrarApartamento" method="POST">
                                     <fieldset>
                                         <legend>Dados do Apartamento</legend>
                                         <label for="bloco">Bloco:</label>
@@ -86,10 +93,10 @@ const apartamentoRoute = (connection) => {
                                         </select><br><br>
                                         <label for="numero_apartamento">Número do Apartamento:</label>
                                         <input type="text" id="numero_apartamento" name="numero_apartamento" required><br><br>
-                                        <input type="submit" value="Cadastrar">
+                                        <input class="submit" type="submit" value="Cadastrar">
                                     </fieldset>
                                 </form>
-                                <a href="/apartamentos">Voltar</a>
+                                <a class="selections" href="/apartamentos">Voltar</a>
                             </body>
                         </html>
                     `);

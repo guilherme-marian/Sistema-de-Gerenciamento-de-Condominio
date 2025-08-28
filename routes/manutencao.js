@@ -152,7 +152,7 @@ const manutencaoRoute = (connection) => {
         const { tipoManutencaoID, localManutencao, dataManutencao } = req.body;
         const insert = 'INSERT INTO Manutencao (tipo_manutencaoID, local_manutencao, data_manutencao) VALUES (?, ?, ?)';
         connection.query(insert, [tipoManutencaoID, localManutencao, dataManutencao], (err, result) => {
-            if(err) {
+            if(err) {           
                 console.error("Erro ao cadastrar manutenção: ", err);
                 res.status(500).send('Erro ao cadastrar manutenção');
                 return;
@@ -173,9 +173,16 @@ const manutencaoRoute = (connection) => {
 
         connection.query(insert, [tipoManutencao], (err, result) => {
             if(err) {
-                console.error("Erro ao cadastrar tipo de manutenção: ", err);
-                res.status(500).send('Erro ao cadastrar tipo de manutenção');
-                return;
+                if(err.code === 'ER_DUP_ENTRY') {
+                    console.error("Erro ao inserir tipo de manutenção: Tipo já existe.");
+                    res.status(400).send("Erro ao inserir tipo de manutenção: Tipo já existe. <br><a href='/cadastroTipoManutencao'>Voltar</a>");
+                    return;
+                }
+                else {
+                    console.error("Erro ao cadastrar tipo de manutenção: ", err);
+                    res.status(500).send('Erro ao cadastrar tipo de manutenção');
+                    return;
+                }
             }
             else {
 
@@ -359,9 +366,17 @@ const manutencaoRoute = (connection) => {
         
         connection.query(update, [descricao, id], (err, result) => {
             if(err) {
-                console.error("Erro ao atualizar tipo de manutenção: ", err);
-                res.status(500).send('Erro ao atualizar tipo de manutenção');
-                return;
+                if(err.code === 'ER_DUP_ENTRY') {
+                    console.error("Erro ao atualizar tipo de manutenção: Tipo já existe.");
+                    res.status(400).send("Erro ao atualizar tipo de manutenção: Tipo já existe. <br><a href='/tipoManutencao'>Voltar</a>");
+                    return;
+                }
+                else {
+                    console.error("Erro ao atualizar tipo de manutenção: ", err);
+                    res.status(500).send('Erro ao atualizar tipo de manutenção');
+                    return;
+                }
+               
             }
             else {
                 res.redirect('/tipoManutencao');

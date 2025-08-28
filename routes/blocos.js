@@ -32,19 +32,24 @@ const blocoRoute = (connection) => {
 
                 console.log("Blocos listados com sucesso");
                 res.send(`
-                    <h1>Lista de Blocos</h1>
 
-                    <form action="/blocos" method="GET">
+                    <link rel="stylesheet" href="/css/style.css">
+
+                    <h1 class=title>Condomínio</h1>
+
+                    <h2 class="subtitle">Lista de Blocos</h2>
+
+                    <form class="search "action="/blocos" method="GET">
                         <input type="text" name="search" placeholder="Pesquisar por descrição">
                         <button type="submit">Pesquisar</button>
                     </form>
-
-                    <table border="1">
+                    
+                    <table class="tables" border="1">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Descrição</th>
-                                <th>Qnt de Apartamentos</th>
+                                <th>Quantidade de Apartamentos</th>
                                 <th colspan="2">Ações</th>
                             </tr>
                         </thead>
@@ -59,8 +64,8 @@ const blocoRoute = (connection) => {
                         </tr>    
                     `).join('')}
                 </table>    
-                <a href="http://localhost:3000/cadastroBloco">Cadastrar Bloco</a>
-                <a href="/">Voltar</a>
+                <a class="selections" href="http://localhost:3000/cadastroBloco">Cadastrar Bloco</a>
+                <a class="selections" href="/">Voltar</a>
 
             `)
         });
@@ -76,9 +81,16 @@ const blocoRoute = (connection) => {
             'INSERT INTO Bloco (descricao, qtd_apartamento) VALUES (?, ?)';
         connection.query(insert, [bloco, quantidade], (err, results) => {
             if(err){
-                console.error("Erro ao inserir produto: ", err);
-                res.status(500).send("Erro ao inserir bloco");
-                return;
+                if(err.code === 'ER_DUP_ENTRY') {
+                    console.error("Erro ao inserir bloco: Bloco já existe.");
+                    res.status(400).send("Erro ao inserir bloco: Bloco já existe. <br><a href='/cadastroBloco'>Voltar</a>");
+                    return;
+                }
+                else {
+                    console.error("Erro ao inserir produto: ", err);
+                    res.status(500).send("Erro ao inserir bloco");
+                    return;
+                }
             }
             else {
                 console.log("Bloco inserido com sucesso!");
@@ -91,12 +103,14 @@ const blocoRoute = (connection) => {
         const id = req.params.ID_Bloco;
 
         res.send(`
-            <h1>Confirmar Deleção</h1>
+            <link rel="stylesheet" href="/css/style.css">
+
+            <h1>Confirmar</h1>
             <p>Tem certeza que deseja deletar o bloco?</p>
             <form action="/deletarBloco/${id}" method="GET">
-                <button type="submit">Sim, deletar</button>
+                <button class="submit" type="submit">Sim, deletar</button>
             </form>
-            <a href="/blocos">Cancelar</a>
+            <a class="selections" href="/blocos">Cancelar</a>
         `);
     });
 
@@ -137,23 +151,28 @@ const blocoRoute = (connection) => {
                     `
                     <html>
                         <head>
-                            <title>Atualizar Bloco</title>
+                            <link rel="stylesheet" href="/css/style.css">
+                            <title>Condomínio</title>
                         </head>
                         <body>
-                            <h1>Atualizar Bloco</h1>
-                            <form action="/atualizarBloco/${bloco.ID_Bloco}" method="POST">
-                                <label for="nome">Nome do Bloco:</label>
-                                <input type="text" id="nome" name="nome" 
-                                value ="${bloco.descricao}" required><br><br>
+                            <h1>Condomínio</h1>
 
-                                <label for="quantidade">Quantidade de apartamentos:</label>
-                                <input type="number" id="quantidade" name="quantidade"
-                                value="${bloco.qtd_apartamento}" required><br><br>
+                            <form class="cadastro" action="/atualizarBloco/${bloco.ID_Bloco}" method="POST">
+                                <fieldset>
+                                    <legend>Detalhes do Bloco</legend>
+                                    <label for="nome">Nome do Bloco:</label>
+                                    <input type="text" id="nome" name="nome" 
+                                    value ="${bloco.descricao}" required><br><br>
 
-                                <input type="submit" value="Atualizar">
+                                    <label for="quantidade">Quantidade de apartamentos:</label>
+                                    <input type="number" id="quantidade" name="quantidade"
+                                    value="${bloco.qtd_apartamento}" required><br><br>
+                                
+                                <input class="submit" type="submit" value="Atualizar">
+                                </fieldset>
                             </form>
 
-                            <a href="/blocos">Voltar</a>
+                            <a class="selections" href="/blocos">Voltar</a>
                         </body>
                     </html>
                     `
@@ -174,9 +193,17 @@ const blocoRoute = (connection) => {
         const update = 'UPDATE Bloco SET descricao = ?, qtd_apartamento = ? WHERE ID_Bloco = ?';
         connection.query(update, [bloco, quantidade, id], (err, results) => {
             if (err) {
-                console.error("Erro ao atualizar bloco: ", err);
-                res.status(500).send("Erro ao atualizar bloco");
-                return;
+                if(err.code === 'ER_DUP_ENTRY') {
+                    console.error("Erro ao atualizar bloco: Bloco já existe.");
+                    res.status(400).send("Erro ao atualizar bloco: Bloco já existe. <br><a href='/blocos'>Voltar</a>");
+                    return;
+                }
+                else {
+                    console.error("Erro ao atualizar bloco: ", err);
+                    res.status(500).send("Erro ao atualizar bloco");
+                    return;
+                }
+                
             } else {
                 console.log("Bloco atualizado com sucesso");
                 res.redirect('/blocos');
