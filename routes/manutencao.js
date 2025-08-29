@@ -123,7 +123,11 @@ const manutencaoRoute = (connection) => {
             else{
                 const tipoOptions = tipos.map(t => `<option value="${t.ID_TipoManutencao}">${t.descricao}</option>`).join('');
                 if(tipoOptions.length === 0) {
-                    res.status(400).send('Nenhum tipo de manutenção cadastrado. Cadastre um tipo antes de cadastrar uma manutenção. <br> <a href="/cadastroTipoManutencao">Ir para cadastro de tipo de manutenção</a>');
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Nenhum tipo de manutenção cadastrado. Cadastre um tipo antes de cadastrar uma manutenção.</p>
+                        <br> 
+                        <a class="selections" href="/tipoManutencao">Ir para tipos de manutenção</a>`);
                     return;
                 }
                 else {

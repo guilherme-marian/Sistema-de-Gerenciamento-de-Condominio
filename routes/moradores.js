@@ -92,7 +92,11 @@ const moradorRoute = (connection) => {
                     data-bloco="${a.descricao}">
                     ${a.numero_apartamento}</option>`).join('');
                 if(apartamentosOptions.length === 0) {
-                    res.status(400).send('Nenhum apartamento cadastrado. Cadastre um apartamento antes de cadastrar um morador. <br> <a href="/apartamentos">Ir para apartamentos</a>');
+                    res.status(400).send(` 
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Nenhum apartamento cadastrado. Cadastre um apartamento antes de cadastrar um morador.</p>
+                        <br> 
+                        <a class="selections" href="/apartamentos">Ir para apartamentos</a>`);
                     return;
                 }
                 else {
