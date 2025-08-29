@@ -30,14 +30,18 @@ const  garagemRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Lista de Veículos na Garagem</h1>
+                    <link rel="stylesheet" href="/css/style.css">
 
-                    <form method="GET" action="/garagem">
+                    <h1 class="title">Condomínio</h1>
+
+                    <h2 class="subtitle">Lista de Veículos na Garagem</h2>
+
+                    <form class="search" method="GET" action="/garagem">
                         <input type="text" name="search" placeholder="Buscar por placa ou nome do morador" value="${search}">
                         <button type="submit">Buscar</button>
                     </form>
 
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>Nome do Dono</th>
@@ -62,7 +66,7 @@ const  garagemRoute = (connection) => {
                         `).join('')}
                     </table>
 
-                    <p><a href="/">Voltar</a></p>
+                    <p><a class="selections" href="/">Voltar</a></p>
                 `);
             }
         });

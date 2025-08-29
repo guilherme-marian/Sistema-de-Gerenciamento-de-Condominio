@@ -32,7 +32,7 @@ const blocoRoute = (connection) => {
 
                 console.log("Blocos listados com sucesso");
                 res.send(`
-
+                    <title>Condomínio</title>
                     <link rel="stylesheet" href="/css/style.css">
 
                     <h1 class=title>Condomínio</h1>
@@ -83,12 +83,20 @@ const blocoRoute = (connection) => {
             if(err){
                 if(err.code === 'ER_DUP_ENTRY') {
                     console.error("Erro ao inserir bloco: Bloco já existe.");
-                    res.status(400).send("Erro ao inserir bloco: Bloco já existe. <br><a href='/cadastroBloco'>Voltar</a>");
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao inserir bloco: Bloco já existe.</p>
+                        <br> 
+                        <a class="selections" href='/cadastroBloco'>Voltar</a>`);
                     return;
                 }
                 else {
-                    console.error("Erro ao inserir produto: ", err);
-                    res.status(500).send("Erro ao inserir bloco");
+                    console.error("Erro ao inserir bloco: ", err);
+                    res.status(500).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao inserir bloco</>
+                        <br>
+                        <a class="selections" href="/cadastroBloco">Voltar</a>`);
                     return;
                 }
             }
@@ -104,11 +112,11 @@ const blocoRoute = (connection) => {
 
         res.send(`
             <link rel="stylesheet" href="/css/style.css">
-
+            <title>Condomínio</title>
             <h1>Confirmar</h1>
             <p>Tem certeza que deseja deletar o bloco?</p>
             <form action="/deletarBloco/${id}" method="GET">
-                <button class="submit" type="submit">Sim, deletar</button>
+                <button class="submit" type="submit">Confirmar</button>
             </form>
             <a class="selections" href="/blocos">Cancelar</a>
         `);
@@ -121,12 +129,20 @@ const blocoRoute = (connection) => {
             if(err) {
                  if (err.code === 'ER_ROW_IS_REFERENCED_2') {
                     console.error("Erro ao deletar bloco: Existem apartamentos associados a este bloco.");
-                    res.status(400).send("Erro ao deletar bloco: Existem apartamentos associados a este bloco.");
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao deletar bloco: Existem apartamentos associados a este bloco.</p>
+                        <br>
+                        <a class="selections" href="/blocos">Voltar</a>`);
                     return;
                 }
                 else {
                     console.error("Erro ao deletar bloco: ", err);
-                    res.status(500).send("Erro ao deletar bloco");
+                    res.status(500).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao deletar bloco</p>
+                        <br>
+                        <a class="selections" href="/blocos">Voltar</a>`);
                     return;
                 }
                 
@@ -155,7 +171,7 @@ const blocoRoute = (connection) => {
                             <title>Condomínio</title>
                         </head>
                         <body>
-                            <h1>Condomínio</h1>
+                            <h1 class="title">Condomínio</h1>
 
                             <form class="cadastro" action="/atualizarBloco/${bloco.ID_Bloco}" method="POST">
                                 <fieldset>

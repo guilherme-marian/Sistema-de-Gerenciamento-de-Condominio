@@ -33,14 +33,20 @@ const moradorRoute = (connection) => {
 
                 console.log("Moradores listados com sucesso");
                 res.send(`
-                    <h1>Lista de Moradores</h1>
 
-                    <form method="GET" action="/moradores">
+                    <title>Moradores</title>
+
+                    <link rel="stylesheet" href="/css/style.css">
+                    <h1 class="title">Condomínio</h1>
+
+                    <h2 class="subtitle">Moradores<h2>
+
+                    <form class="search" method="GET" action="/moradores">
                         <input type="text" name="search" placeholder="Buscar por nome ou CPF" value="${search}">
                         <button type="submit">Buscar</button>
                     </form>
 
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>CPF</th>
@@ -63,8 +69,8 @@ const moradorRoute = (connection) => {
                             </tr>    
                         `).join('')}
                     </table>    
-                    <a href="http://localhost:3000/cadastroMorador">Cadastrar Morador</a>
-                    <a href="/">Voltar</a>
+                    <a class="selections" href="http://localhost:3000/cadastroMorador">Cadastrar Morador</a>
+                    <a class="selections" href="/">Voltar</a>
                 `)
             }
         });
@@ -91,8 +97,12 @@ const moradorRoute = (connection) => {
                 }
                 else {
                     res.send(`
-                        <h1>Condomínio</h1>
-                    <form action="/cadastrarMorador" method="POST">
+                        <link rel="stylesheet" href="/css/style.css">
+                        <title>Cadastro de Morador</title>
+
+                        <h1 class="title">Condomínio</h1>
+
+                    <form class="cadastro" action="/cadastrarMorador" method="POST">
                         <fieldset>
                             <legend>Cadastrar Morador</legend>
                             <label for="cpf">CPF:</label>
@@ -108,6 +118,7 @@ const moradorRoute = (connection) => {
                             <br>
                             
                             <label for="apartamento">Apartamento:</label>
+                            <br>
                             <select id="apartamento" name="apartamentoID" required>
                                 <option value="" disabled selected>Selecione um Apartamento</option>
                                 ${apartamentosOptions}
@@ -119,6 +130,7 @@ const moradorRoute = (connection) => {
 
                             <br>
                             <label for="responsavel">Responsável pelo apartamento?</label>
+                            <br>
                             <input type="radio" id="simResponsavel" name="responsavel" value="Sim" required>
                             <label for="simResponsavel">Sim</label>
                             <input type="radio" id="naoResponsavel" name="responsavel" value="Não" required>
@@ -126,6 +138,7 @@ const moradorRoute = (connection) => {
                             
                             <br>
                             <label for="proprietario">Proprietário do apartamento?</label>
+                            <br>
                             <input type="radio" id="simProprietario" name="proprietario" value="Sim" required>
                             <label for="simProprietario">Sim</label>
                             <input type="radio" id="naoProprietario" name="proprietario" value="Não" required>
@@ -133,6 +146,7 @@ const moradorRoute = (connection) => {
                             <br>
 
                             <label for="veiculo">Possui veículo?</label>
+                            <br>
                             <input type="radio" id="simVeiculo" name="veiculo" value="Sim" onClick="showCarInfo()" required>
                             <label for="simVeiculo">Sim</label>
                             <input type="radio" id="naoVeiculo" name="veiculo" value="Não" onClick="hideCarInfo()" required>
@@ -159,10 +173,9 @@ const moradorRoute = (connection) => {
                                 <br>
                             </fieldset>
                         </div>
-                    
-                        <input type="submit">
+                        <input class="submit" type="submit" value="Cadastrar">
                     </form>
-                    <p><a href="http://localhost:3000/moradores">Voltar</a></p>
+                    <p><a class="selections" href="http://localhost:3000/moradores">Voltar</a></p>
 
                     <script src="/js/app.js"></script>
                     <script src="/js/autoCompleteMorador.js"></script>
@@ -181,7 +194,11 @@ const moradorRoute = (connection) => {
         connection.query(blocoIDQuery, [apartamentoID], (err, blocoRows) => {
             if(err) {
                 console.error("Erro ao buscar bloco do apartamento: ", err);
-                res.status(500).send('Erro ao buscar bloco do apartamento');
+                res.status(500).send(`
+                    <link rel="stylesheet" href="/css/style.css">
+                    <p>Erro ao buscar bloco do apartamento</p>
+                    <br>
+                    <a class="selections" href="/moradores">Voltar</a>`);
                 return;
             }
             else {
@@ -191,7 +208,11 @@ const moradorRoute = (connection) => {
                 connection.query(insert, [cpf, nome, telefone, apartamentoID, blocoID, responsavel, proprietario, veiculo], (err, result) => {
                     if(err) {
                         if(err.code === 'ER_DUP_ENTRY') {
-                            res.status(400).send('CPF já cadastrado. <br> <a href="http://localhost:3000/cadastroMorador">Voltar</a>');
+                            res.status(400).send(`
+                                <link rel="stylesheet" href="/css/style.css">
+                                CPF já cadastrado. 
+                                <br>
+                                <a class="selections" href="http://localhost:3000/cadastroMorador">Voltar</a>`);
                             return;
                         }
                         else {
@@ -238,12 +259,13 @@ const moradorRoute = (connection) => {
         const id = req.params.ID_Morador;
 
         res.send(`
-            <h1>Confirmar Deleção de Morador</h1>
+            <link rel="stylesheet" href="/css/style.css">
+            <h1>Confirmar</h1>
             <p>Tem certeza que deseja deletar o morador?</p>
             <form action="/deletarMorador/${id}" method="GET">
-                <input type="submit" value="Confirmar Deleção">
+                <input class="submit" type="submit" value="Confirmar">
             </form>
-            <p><a href="http://localhost:3000/moradores">Cancelar</a></p>
+            <a class="selections" href="http://localhost:3000/moradores">Cancelar</a>
         `);
     });
 
@@ -256,7 +278,11 @@ const moradorRoute = (connection) => {
                     connection.query('DELETE FROM Veiculos WHERE donoID = ?', [id], (err, results) => {
                         if (err) {
                             console.error("Erro ao deletar veículos associados ao morador: ", err);
-                            res.status(500).send("Erro ao deletar veículos associados ao morador");
+                            res.status(500).send(`
+                                <link rel="stylesheet" href="/css/style.css">
+                                <p>Erro ao deletar veículos associados ao morador</p>
+                                <br>
+                                <a class="selections" href="/moradores">Voltar</a>`);
                             return;
                         }
                     });
@@ -308,8 +334,10 @@ const moradorRoute = (connection) => {
                             </option>
                         `).join('');
                         res.send(`
-                            <h1>Condomínio</h1>
-                            <form action="/atualizarMorador/${id}" method="POST">
+                            <link rel="stylesheet" href="/css/style.css">
+                            
+                            <h1 class="title">Condomínio</h1>
+                            <form class="cadastro" action="/atualizarMorador/${id}" method="POST">
                                 <fieldset>
                                     <legend>Atualizar Morador</legend>
                                     <label for="cpf">CPF:</label>
@@ -325,24 +353,28 @@ const moradorRoute = (connection) => {
                                     <br>
                                     
                                     <label for="apartamento">Apartamento:</label>
+                                    <br>
                                     <select id="apartamento" name="apartamentoID" required>
                                         ${apartamentosOptions}
                                     </select>
 
                                     <br>
                                     <label for="responsavel">Responsável pelo apartamento?</label>
+                                    <br>
                                     <input type="radio" id="simResponsavel" name="responsavel" value="sim" ${morador.responsavel === 'Sim' ? 'checked' : ''} required>
                                     <label for="simResponsavel">Sim</label>
                                     <input type="radio" id="naoResponsavel" name="responsavel" value="nao" ${morador.responsavel === 'Não' ? 'checked' : ''} required>
                                     <label for="naoResponsavel">Não</label>
                                     <br>
                                     <label for="proprietario">Proprietário do apartamento?</label>
+                                    <br>
                                     <input type="radio" id="simProprietario" name="proprietario" value="sim" ${morador.proprietario === 'Sim' ? 'checked' : ''} required>
                                     <label for="simProprietario">Sim</label>
                                     <input type="radio" id="naoProprietario" name="proprietario" value="nao" ${morador.proprietario === 'Não' ? 'checked' : ''} required>
                                     <label for="naoProprietario">Não</label>
                                     <br>
                                     <label for="veiculo">Possui veículo?</label>
+                                    <br>
                                     <input type="radio" id="simVeiculo" name="veiculo" value="sim" ${morador.possui_veiculo === 'Sim' ? 'checked' : ''} onClick="showCarInfo()" required>
                                     <label for="simVeiculo">Sim</label>
                                     <input type="radio" id="naoVeiculo" name="veiculo" value="nao" ${morador.possui_veiculo === 'Não' ? 'checked' : ''} onClick="hideCarInfo()" required>
@@ -367,7 +399,7 @@ const moradorRoute = (connection) => {
                                     <br>
                                 </fieldset>
                                 </div>
-                                <input type="submit" value="Atualizar">
+                                <input class="submit" type="submit" value="Atualizar">
                             </form>
                             
                             <script src="/js/app.js"></script>
@@ -381,7 +413,7 @@ const moradorRoute = (connection) => {
                                     }
                                 };
                             </script>
-                            <p><a href="http://localhost:3000/moradores">Voltar para Moradores</a></p>
+                            <p><a class="selections" href="http://localhost:3000/moradores">Voltar</a></p>
                         `);
                     }
                 });

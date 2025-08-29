@@ -79,9 +79,11 @@ const apartamentoRoute = (connection) => {
                         <html>
                             <link rel="stylesheet" href="/css/style.css">
 
-                            <head><title>Condomínio</title></head>
+                            <head>
+                            <title>Condomínio</title></head>
                             <body>
-                                <h1>Condomínio</h1>
+
+                                <h1 class="title">Condomínio</h1>
 
                                 <form class="cadastro" action="/cadastrarApartamento" method="POST">
                                     <fieldset>
@@ -152,21 +154,25 @@ const apartamentoRoute = (connection) => {
             else {
                 res.send(`
                     <html>
+                        <link rel="stylesheet" href="/css/style.css">
                         <head>
-                            <title>Atualizar Apartamento</title>
+                            <title>Condomínio</title>
                         </head>
                         <body>
-                            <h1>Atualizar Apartamento</h1>
-                            <form action="/atualizarApartamento/${id}" method="POST">
-                                <label for="bloco">Bloco:</label>
-                                <select id="bloco" name="BlocoID" required>
-                                    ${blocoOptions}
-                                </select><br><br>
-                                <label for="numero_apartamento">Número do Apartamento:</label>
-                                <input type="text" id="numero_apartamento" name="numero_apartamento" value="${apartamento.numero_apartamento}" required><br><br>
-                                <input type="submit" value="Atualizar">
+                            <h1 class="title">Condomínio</h1>
+                            <form class="cadastro" action="/atualizarApartamento/${id}" method="POST">
+                                <fieldset>
+                                    <legend>Dados do Apartamento</legend>
+                                    <label for="bloco">Bloco:</label>
+                                    <select id="bloco" name="BlocoID" required>
+                                        ${blocoOptions}
+                                    </select><br><br>
+                                    <label for="numero_apartamento">Número do Apartamento:</label>
+                                    <input type="text" id="numero_apartamento" name="numero_apartamento" value="${apartamento.numero_apartamento}" required><br><br>
+                                    <input class="submit" type="submit" value="Atualizar">
+                                </fieldset>
                             </form>
-                            <a href="/apartamentos">Voltar</a>
+                            <a class="selections" href="/apartamentos">Voltar</a>
                         </body>
                     </html>
                 `);
@@ -185,7 +191,11 @@ const apartamentoRoute = (connection) => {
         connection.query(update, [bloco, numero_apartamento, id], (err, results) => {
             if (err) {
                 console.error("Erro ao atualizar apartamento: ", err);
-                res.status(500).send("Erro ao atualizar apartamento");
+                res.status(500).send(`
+                    <link rel="stylesheet" href="/css/style.css">
+                    Erro ao atualizar apartamento
+                    <br>
+                    <a class="selections" href="/apartamentos">Voltar</a>`);
                 return;
             } else {
                 console.log("Apartamento atualizado com sucesso");
@@ -198,12 +208,14 @@ const apartamentoRoute = (connection) => {
         const id = req.params.ID_Apartamento;
 
         res.send(`
-            <h1>Confirmar Deleção</h1>
+            <link rel="stylesheet" href="/css/style.css">
+
+            <h1>Confirmar</h1>
             <p>Tem certeza que deseja deletar o apartamento?</p>
             <form action="/deletarApartamento/${id}" method="GET">
-                <button type="submit">Sim, deletar</button>
+                <button class="submit" type="submit">Confirmar</button>
             </form>
-            <a href="/apartamentos">Cancelar</a>
+            <a class="selections" href="/apartamentos">Cancelar</a>
         `);
     });
 
@@ -214,12 +226,20 @@ const apartamentoRoute = (connection) => {
         connection.query(del, [id], (err, results) => {
             if(err) {
                 if(err.code === 'ER_ROW_IS_REFERENCED_2') {
-                    res.status(400).send("Não é possível deletar este apartamento pois ele possuí um morador.");
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Não é possível deletar este apartamento pois ele possuí um morador.</p>
+                        <br>
+                        <a class="selections" href="/apartamentos">Voltar</a>`);
                     return;
                 }
                 else{
                     console.error("Erro ao deletar apartamento: ", err);
-                    res.status(500).send("Erro ao deletar apartamento");
+                    res.status(500).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao deletar apartamento</p>
+                        <br>
+                        <a class="selections" href="/apartamentos">Voltar</a>`);
                     return;
                 }
                 

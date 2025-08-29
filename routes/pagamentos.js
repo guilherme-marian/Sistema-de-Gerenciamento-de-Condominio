@@ -30,14 +30,16 @@ const pagamentoRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Lista de Pagamentos</h1>
+                    <link rel="stylesheet" href="/css/style.css">
 
-                    <form method="GET" action="/pagamentos">
+                    <h1 class="title">Condomínio</h1>
+
+                    <form class="search" method="GET" action="/pagamentos">
                         <input type="text" name="search" placeholder="Buscar por nome ou CPF" value="${search}">
                         <button type="submit">Buscar</button>
                     </form>
 
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>Morador</th>
@@ -67,9 +69,9 @@ const pagamentoRoute = (connection) => {
                             </tr> 
                         `).join('')}
                     </table> 
-                    <a href="/cadastroPagamento">Cadastrar Pagamento</a>
+                    <a class="selections" href="/cadastroPagamento">Cadastrar Pagamento</a>
                     <br>
-                    <a href="/">Voltar</a>
+                    <a class="selections" href="/">Voltar</a>
                 `)
             }
         });
@@ -105,8 +107,11 @@ const pagamentoRoute = (connection) => {
                     return;
                 }
                 res.send(`
-                    <h1>Cadastro de Pagamento</h1>
-                    <form action="/cadastrarPagamento" method="POST">
+                    <link rel="stylesheet" href="/css/style.css">
+
+                    <h1 class="title">Caondomínio</h1>
+
+                    <form class="cadastro" action="/cadastrarPagamento" method="POST">
                         <fieldset>
                             <legend>Detalhes do Pagamento</legend>
 
@@ -142,10 +147,10 @@ const pagamentoRoute = (connection) => {
                                 <label for="Vencimento">Vencimento:</label>
                                 <input type="month" id="vencimento" name="vencimento" required><br><br>
 
-                                <input type="submit" value="Pagar">
+                                <input class="submit" type="submit" value="Pagar">
                         </fieldset>
                     </form>
-                    <a href="/pagamentos">Voltar para lista de pagamentos</a>
+                    <a class="selections" href="/pagamentos">Voltar</a>
 
                     <script src="/js/autoCompletePag.js"></script>
                 `);
@@ -168,23 +173,24 @@ const pagamentoRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Pagamento efetuado com sucesso!</h1>
-                    <a href="/pagamentos">Voltar para lista de pagamentos</a>
+                    <link rel="stylesheet" href="/css/style.css">
+
+                    <h1 class="title">Pagamento efetuado com sucesso!</h1>
+                    <a class="selections" href="/pagamentos">Voltar para lista de pagamentos</a>
                 `);
             }
         });
     });
 
     router.get('/deletarPagamento/:id', (req, res) => {
-        res.send(
-            `<h1>Tem certeza que deseja deletar este pagamento?</h1>
+        res.send(`
+            <link rel="stylesheet" href="/css/style.css">
+            <h1 class="title">Tem certeza que deseja deletar este pagamento?</h1>
             <form action="/confirmarDeletarPagamento/${req.params.id}" method="POST">
-                <button type="submit">Sim, deletar</button>
+                <button class="submit" type="submit">Sim, deletar</button>
             </form>
-            <a href="/pagamentos">Cancelar</a>
-            `
-        )
-        
+            <a class="selections" href="/pagamentos">Cancelar</a>
+        `)
     });
 
     router.post('/confirmarDeletarPagamento/:id', (req, res) => {

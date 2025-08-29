@@ -26,8 +26,7 @@ function setCarFieldsRequired(isRequired) {
          'numeroVaga', 
          'placa', 
          'marca', 
-         'modelo'];
-       
+         'modelo'];  
     fields.forEach(fieldId => {
         document.getElementById(fieldId).required = isRequired;
     });

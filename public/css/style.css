@@ -22,7 +22,6 @@ body {
 .Options {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     width: 100%;
     max-width: 400px;
 }
@@ -45,6 +44,7 @@ body {
 
 .search {
     display: flex;
+    align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
     width: 100%;
@@ -106,7 +106,7 @@ body {
 .selections{
     display:block;
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     text-decoration: none;
     background-color: #3498db;
     border-radius: 4px;
@@ -154,6 +154,65 @@ body {
     box-sizing: border-box;
 }
 
+.cadastro input[type="radio"] {
+    display: none;
+}
+
+.cadastro input[type="radio"] + label::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border: 1px solid #2980b9;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-20%, 0%);
+    margin: -16px, 20px;
+}
+
+.cadastro input[type="radio"] + label::after {
+    content: "";
+    background-color: #2980b9;
+    width: 14px;
+    height: 14px;;
+    position: absolute;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 5px;
+    margin-left: -46px;
+    opacity: 0%
+}
+
+.cadastro input[type="radio"]:checked + label::after{
+    transition: opacity 0.3s ease;
+    opacity: 100%;
+}
+
+.cadastro input[type="radio"]:checked + label::before {
+    opacity: 0%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cadastro input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.cadastro input[type="month"], input[type="date"] {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .cadastro fieldset {
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -162,7 +221,7 @@ body {
 }
 
 .cadastro select {
-    background-color: #cecece;
+    background-color: #e9e7e7;
     border-radius: 4px;
     padding: 0.2rem;
     transition: 0.2s ease;
@@ -171,21 +230,17 @@ body {
     &, &::picker(select) {
         appearance: base-select;
         padding: 0.5rem;
-        border: none;
+        border: 1px;
         border-radius: 4px;
     }
+}
 
-    &::picker(select) {
-        margin-block-start: 0.5rem;
+.cadastro option {
+    &::checkmark {
+        display: none;
     }
-
-    .picker {
-        transition: rotate 0.3s ease;
-
-        :open & {
-            rotate: 90deg;
-        }
-    }
+    text-align: center;
+    border-radius: 4px;
 }
 
 .submit {

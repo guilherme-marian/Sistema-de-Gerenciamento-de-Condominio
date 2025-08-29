@@ -28,14 +28,18 @@ const manutencaoRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Lista de Manutenções</h1>
+                    <link rel="stylesheet" href="/css/style.css">
 
-                    <form method="GET" action="/manutencao">
+                    <h1 class="title">Condomínio</h1>
+
+                    <h2 class="subtitle">Manutenções</h2>
+
+                    <form class="search" method="GET" action="/manutencao">
                         <input type="text" name="search" placeholder="Buscar por descrição ou local" value="${search}">
                         <button type="submit">Buscar</button>
                     </form>
 
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>Descrição</th>
@@ -54,11 +58,9 @@ const manutencaoRoute = (connection) => {
                             </tr> 
                         `).join('')}
                     </table> 
-                    <a href="/cadastroManutencao">Cadastrar Manutenção</a>
-                    <br>
-                    <a href="/cadastroTipoManutencao">Cadastrar Tipo de Manutenção</a>
-                    <a href="/tipoManutencao">Ver Tipos de Manutenção registradas</a>
-                    <a href="/">Voltar</a>
+                    <a class="selections" href="/cadastroManutencao">Cadastrar Manutenção</a>
+                    <a class="selections" href="/tipoManutencao">Ver Tipos de Manutenção registradas</a>
+                    <a class="selections" href="/">Voltar</a>
                 `)
             }
         });
@@ -78,14 +80,18 @@ const manutencaoRoute = (connection) => {
             }
             else {
                 res.send(`
-                    <h1>Lista de Tipos de Manutenção</h1>
+                    <link rel="stylesheet" href="/css/style.css">
 
-                    <form method="GET" action="/tipoManutencao">
+                    <h1 class="title">Condomínio</h1>
+
+                    <h2 class="subtitle">Tipos de Manuteção</h2>
+
+                    <form class="search" method="GET" action="/tipoManutencao">
                         <input type="text" name="search" placeholder="Buscar por descrição" value="${search}">
                         <button type="submit">Buscar</button>
                     </form>
 
-                    <table border="1">
+                    <table class="tables" border="1">
                         <tr>
                             <th>ID</th>
                             <th>Descrição</th>
@@ -100,8 +106,8 @@ const manutencaoRoute = (connection) => {
                             </tr>    
                         `).join('')}
                     </table>    
-                    <a href="/cadastroTipoManutencao">Cadastrar Tipo de Manutenção</a>
-                    <a href="/manutencao">Voltar</a>
+                    <a class="selections" href="/cadastroTipoManutencao">Cadastrar Tipo de Manutenção</a>
+                    <a class="selections" href="/manutencao">Voltar</a>
                 `)
             }
         });
@@ -122,8 +128,11 @@ const manutencaoRoute = (connection) => {
                 }
                 else {
                     res.send(`
-                        <h1>Cadastro de Manutenção</h1>
-                        <form action="/cadastrarManutencao" method="POST">
+                        <link rel="stylesheet" href="/css/style.css">
+
+                        <h1 class="title">Condomínio</h1>
+
+                        <form class="cadastro" action="/cadastrarManutencao" method="POST">
                             <fieldset>
                                 <legend>Cadastro de Manutenção</legend>
                                 <label for="tipoManutencaoID">Tipo de Manutenção:</label>
@@ -138,10 +147,10 @@ const manutencaoRoute = (connection) => {
                                 <label for="dataManutencao">Data da Manutenção:</label>
                                 <input type="date" id="dataManutencao" name="dataManutencao" required>
                                 <br>
-                                <input type="submit" value="Cadastrar">
+                                <input class="submit" type="submit" value="Cadastrar">
                             </fieldset>
                         </form>
-                        <a href="/manutencao">Voltar</a>
+                        <a class="selections" href="/manutencao">Voltar</a>
                     `);
                 }
             }
@@ -175,7 +184,11 @@ const manutencaoRoute = (connection) => {
             if(err) {
                 if(err.code === 'ER_DUP_ENTRY') {
                     console.error("Erro ao inserir tipo de manutenção: Tipo já existe.");
-                    res.status(400).send("Erro ao inserir tipo de manutenção: Tipo já existe. <br><a href='/cadastroTipoManutencao'>Voltar</a>");
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao inserir tipo de manutenção: Tipo já existe.</p>
+                        <br>
+                        <a class="selections" href='/cadastroTipoManutencao'>Voltar</a>`);
                     return;
                 }
                 else {
@@ -186,7 +199,7 @@ const manutencaoRoute = (connection) => {
             }
             else {
 
-                res.redirect('/manutencao');
+                res.redirect('/tipoManutencao');
             }
         });
     });
@@ -194,12 +207,13 @@ const manutencaoRoute = (connection) => {
     router.get('/confirmarDeletarManutencao/:ID_Manutencao', (req, res) => {
         const id = req.params.ID_Manutencao;
         res.send(`
-            <h1>Confirmar Deleção</h1>
+            <link rel="stylesheet" href="/css/style.css">
+            <h1 class="title">Confirmar</h1>
             <p>Tem certeza que deseja deletar a manutenção?</p>
             <form action="/deletarManutencao/${id}" method="POST">
-                <input type="submit" value="Deletar">
+                <input class="submit" type="submit" value="Deletar">
             </form>
-            <a href="/manutencao">Cancelar</a>
+            <a class="selections" href="/manutencao">Cancelar</a>
         `);
     });
 
@@ -246,8 +260,11 @@ const manutencaoRoute = (connection) => {
                             <option value="${t.ID_TipoManutencao}" ${t.ID_TipoManutencao === manutencao.tipo_manutencaoID ? 'selected' : ''}>${t.descricao}</option>
                         `).join('');
                         res.send(`
-                            <h1>Atualizar Manutenção</h1>
-                            <form action="/atualizarManutencao/${id}" method="POST">
+                            <link rel="stylesheet" href="/css/style.css">
+
+                            <h1 class="title">Condomínio</h1>
+
+                            <form class="cadastro" action="/atualizarManutencao/${id}" method="POST">
                                 <fieldset>
                                     <legend>Atualizar Manutenção</legend>
                                     <label for="tipoManutencaoID">Tipo de Manutenção:</label>
@@ -262,10 +279,10 @@ const manutencaoRoute = (connection) => {
                                     <label for="dataManutencao">Data da Manutenção:</label>
                                     <input type="date" id="dataManutencao" name="dataManutencao" value="${manutencao.data_manutencao.toISOString().split('T')[0]}" required>
                                     <br>
-                                    <input type="submit" value="Atualizar">
+                                    <input class="submit" type="submit" value="Atualizar">
                                 </fieldset>
                             </form>
-                            <a href="/manutencao">Voltar</a>
+                            <a class="selections" href="/manutencao">Voltar</a>
                         `);
                     }
                 });
@@ -293,12 +310,13 @@ const manutencaoRoute = (connection) => {
     router.get('/confirmarDeletarTipoManutencao/:ID_TipoManutencao', (req, res) => {
         const id = req.params.ID_TipoManutencao;
         res.send(`
-            <h1>Confirmar Deleção</h1>
+            <link rel="stylesheet" href="/css/style.css">
+            <h1>Confirmar</h1>
             <p>Tem certeza que deseja deletar o tipo de manutenção?</p>
             <form action="/deletarTipoManutencao/${id}" method="POST">
-                <input type="submit" value="Deletar">
+                <input class="submit" type="submit" value="Deletar">
             </form>
-            <a href="/tipoManutencao">Cancelar</a>
+            <a class="selections" href="/tipoManutencao">Cancelar</a>
         `);
     });
 
@@ -309,7 +327,11 @@ const manutencaoRoute = (connection) => {
         connection.query(deleteQuery, [id], (err, result) => {
             if(err) {
                 if (err.code === 'ER_ROW_IS_REFERENCED_2') {
-                    console.error("Erro ao deletar tipo de manutenção: Existem manutenções associadas a este tipo.");
+                    console.error(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao deletar tipo de manutenção: Existem manutenções associadas a este tipo.</p>
+                        <br>
+                        <a class="selections" href="/tipoManutencao">Voltar</a>`);
                     res.status(400).send("Erro ao deletar tipo de manutenção: Existem manutenções associadas a este tipo.");
                     return;
                 }
@@ -343,17 +365,19 @@ const manutencaoRoute = (connection) => {
             else {
                 const tipoManutencao = rows[0];
                 res.send(`
-                    <h1>Atualizar Tipo de Manutenção</h1>
-                    <form action="/atualizarTipoManutencao/${id}" method="POST">
+                    <link rel="stylesheet" href="/css/style.css">
+
+                    <h1 class="title">Condomínio</h1>
+                    <form class="cadastro" action="/atualizarTipoManutencao/${id}" method="POST">
                         <fieldset>
                             <legend>Atualizar Tipo de Manutenção</legend>
                             <label for="descricao">Descrição:</label>
                             <input type="text" id="descricao" name="descricao" value="${tipoManutencao.descricao}" required>
                             <br>
-                            <input type="submit" value="Atualizar">
+                            <input class="submit" type="submit" value="Atualizar">
                         </fieldset>
                     </form>
-                    <a href="/tipoManutencao">Voltar</a>
+                    <a class="selections" href="/tipoManutencao">Voltar</a>
                 `);
             }
         });
@@ -368,7 +392,11 @@ const manutencaoRoute = (connection) => {
             if(err) {
                 if(err.code === 'ER_DUP_ENTRY') {
                     console.error("Erro ao atualizar tipo de manutenção: Tipo já existe.");
-                    res.status(400).send("Erro ao atualizar tipo de manutenção: Tipo já existe. <br><a href='/tipoManutencao'>Voltar</a>");
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Erro ao deletar tipo de manutenção: Esse tipo de manutenção já existe</p>
+                        <br>
+                        <a class="selections" href="/tipoManutencao">Voltar</a>`);
                     return;
                 }
                 else {

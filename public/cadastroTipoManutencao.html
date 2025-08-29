@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Cadastro de Tipo de Manutenção</h1>
-    <form action="/cadastrarTipoManutencao" method="POST">
+    <h1 class="title">Condomínio</h1>
+
+    <form class="cadastro" action="/cadastrarTipoManutencao" method="POST">
         <fieldset>
             <legend>Cadastro de Tipo de Manutenção</legend>
 
             <label for="tipoManutencao">Descrição da manutencao:</label>
             <input type="text" id="tipoManutencao" name="tipoManutencao" required>
             <br>
-            <input type="submit" value="Cadastrar">
+            <input class="submit" type="submit" value="Cadastrar">
         </fieldset>
     </form>
-    <p><a href="http://localhost:3000/manutencao">Voltar</a></p>
+    <p><a class="selections" href="http://localhost:3000/tipoManutencao">Voltar</a></p>
 </body>
 </html>
