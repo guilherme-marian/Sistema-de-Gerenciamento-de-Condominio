@@ -125,9 +125,9 @@ const manutencaoRoute = (connection) => {
                 if(tipoOptions.length === 0) {
                     res.status(400).send(`
                         <link rel="stylesheet" href="/css/style.css">
-                        <p>Nenhum tipo de manutenção cadastrado. Cadastre um tipo antes de cadastrar uma manutenção.</p>
-                        <br> 
-                        <a class="selections" href="/tipoManutencao">Ir para tipos de manutenção</a>`);
+                        <p>Nenhum tipo de manutenção cadastrado. Cadastre um tipo antes de cadastrar uma manutenção.</p> 
+                        <br>
+                        <a class="selections" href="/cadastroTipoManutencao">Ir para cadastro de tipo de manutenção</a>`);
                     return;
                 }
                 else {
@@ -398,7 +398,7 @@ const manutencaoRoute = (connection) => {
                     console.error("Erro ao atualizar tipo de manutenção: Tipo já existe.");
                     res.status(400).send(`
                         <link rel="stylesheet" href="/css/style.css">
-                        <p>Erro ao deletar tipo de manutenção: Esse tipo de manutenção já existe</p>
+                        <p>Erro ao atualizar tipo de manutenção: Esse tipo de manutenção já existe</p>
                         <br>
                         <a class="selections" href="/tipoManutencao">Voltar</a>`);
                     return;

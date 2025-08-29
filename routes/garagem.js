@@ -2,7 +2,6 @@ import {Router} from "express";
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { connect } from "http2";
 
 
 const __filename = fileURLToPath(import.meta.url);

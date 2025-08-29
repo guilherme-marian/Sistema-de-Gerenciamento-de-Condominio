@@ -74,7 +74,7 @@ const apartamentoRoute = (connection) => {
                     res.status(400).send(`
                         <link rel="stylesheet" href="/css/style.css">
                         <p>Nenhum bloco cadastrado. Cadastre um bloco antes de cadastrar um apartamento.</p>
-                        <br> 
+                        <br>
                         <a class="selections" href="/blocos">Ir para blocos</a>`);
                     return;
                 }
