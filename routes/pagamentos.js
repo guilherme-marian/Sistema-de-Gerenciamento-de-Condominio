@@ -18,7 +18,7 @@ const pagamentoRoute = (connection) => {
             JOIN Apartamento A ON P.apartamentoID = A.ID_Apartamento
             JOIN Bloco B ON A.BlocoID = B.ID_Bloco
             LEFT JOIN Morador M ON P.moradorID = M.ID_Morador
-            WHERE M.nome LIKE ? OR M.cpf LIKE ?;`;
+            AND (M.nome LIKE ? OR M.cpf LIKE ?);`;
         const searchParam = `%${search}%`;
 
         connection.query(select, [searchParam, searchParam], (err, rows) => {
@@ -102,7 +102,11 @@ const pagamentoRoute = (connection) => {
                     ${a.numero_apartamento}</option>`).join('');
 
                 if(apartamentoOptions.length === 0) {
-                    res.status(400).send('Nenhum morador cadastrado. Cadastre um morador antes de cadastrar um pagamento. <br> <a href="/moradores">Ir para moradores</a>');
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Nenhum morador cadastrado. Cadastre um morador antes de cadastrar um pagamento.</p>
+                        <br> 
+                        <a class="selections" href="/moradores">Ir para moradores</a>`);
                     return;
                 }
                 res.send(`
