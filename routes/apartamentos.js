@@ -71,7 +71,11 @@ const apartamentoRoute = (connection) => {
             else{
                 const blocoOptions = blocos.map(b => `<option value="${b.ID_Bloco}">${b.descricao}</option>`).join('');
                 if(blocoOptions.length === 0) {
-                    res.status(400).send('Nenhum bloco cadastrado. Cadastre um bloco antes de cadastrar um apartamento. <br> <a href="/blocos">Ir para blocos</a>');
+                    res.status(400).send(`
+                        <link rel="stylesheet" href="/css/style.css">
+                        <p>Nenhum bloco cadastrado. Cadastre um bloco antes de cadastrar um apartamento.</p>
+                        <br>
+                        <a class="selections" href="/blocos">Ir para blocos</a>`);
                     return;
                 }
                 else {
