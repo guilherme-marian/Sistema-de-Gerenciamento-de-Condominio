@@ -398,7 +398,7 @@ const manutencaoRoute = (connection) => {
                     console.error("Erro ao atualizar tipo de manutenção: Tipo já existe.");
                     res.status(400).send(`
                         <link rel="stylesheet" href="/css/style.css">
-                        <p>Erro ao deletar tipo de manutenção: Esse tipo de manutenção já existe</p>
+                        <p>Erro ao atualizar tipo de manutenção: Esse tipo de manutenção já existe</p>
                         <br>
                         <a class="selections" href="/tipoManutencao">Voltar</a>`);
                     return;
